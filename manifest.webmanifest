@@ -1,0 +1,94 @@
+{
+  "name": "USSD",
+  "short_name": "USSD",
+  "description": "تحويل سريع عبر رموز USSD",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3F8FF",
+  "theme_color": "#F3F8FF",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "PalPay: دفع لصديق",
+      "short_name": "صديق PalPay",
+      "url": "./?a=friend&w=palpay",
+      "icons": [
+        {
+          "src": "palpay.png",
+          "sizes": "128x128",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "PalPay: دفع لتاجر",
+      "short_name": "تاجر PalPay",
+      "url": "./?a=merchant&w=palpay",
+      "icons": [
+        {
+          "src": "palpay.png",
+          "sizes": "128x128",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Jawwal Pay: دفع لصديق",
+      "short_name": "صديق جوال",
+      "url": "./?a=friend&w=jawwal",
+      "icons": [
+        {
+          "src": "jawwal.png",
+          "sizes": "225x225",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Jawwal Pay: دفع لتاجر",
+      "short_name": "تاجر جوال",
+      "url": "./?a=merchant&w=jawwal",
+      "icons": [
+        {
+          "src": "jawwal.png",
+          "sizes": "225x225",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "id": "./",
+  "categories": [
+    "finance",
+    "utilities"
+  ]
+}

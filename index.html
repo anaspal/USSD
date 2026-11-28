@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: file:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F3F8FF" media="(prefers-color-scheme:light)">
+<meta name="theme-color" content="#0A1226" media="(prefers-color-scheme:dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="USSD">
+<title>USSD</title>
+<script>try{if(window.top!==window.self){document.documentElement.style.display='none';window.top.location=window.self.location}}catch(e){document.documentElement.style.display='none'}
+try{if(localStorage.getItem('ussd_lock'))document.documentElement.classList.add('locked')}catch(e){}</script>
+<style>
+/* Amiri is bundled locally so Arabic typography also works offline. */
+@font-face{font-family:"Amiri";src:url("./fonts/Amiri-Regular.ttf") format("truetype");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"Amiri";src:url("./fonts/Amiri-Bold.ttf") format("truetype");font-style:normal;font-weight:700 900;font-display:swap}
+@font-face{font-family:"Amiri";src:url("./fonts/Amiri-Italic.ttf") format("truetype");font-style:italic;font-weight:400;font-display:swap}
+@font-face{font-family:"Amiri";src:url("./fonts/Amiri-BoldItalic.ttf") format("truetype");font-style:italic;font-weight:700 900;font-display:swap}
+/* =====================================================================
+   USSD — ColorOS 17 × Glass × FLOW
+   One stylesheet: tokens → base → shell → components → sheets → motion.
+   Dark theme only redefines tokens (see #dark-css).
+   ===================================================================== */
+:root{
+  color-scheme:light;
+  --font:"Amiri","Noto Naskh Arabic","Noto Sans Arabic",serif;
+  --font-sym:"Segoe UI Historic","Noto Sans Egyptian Hieroglyphs","Noto Sans Math","Cambria Math","Apple Symbols","Segoe UI Symbol";
+
+  /* ink */
+  --ink:#0B1A3A; --ink-2:#4B5C80; --ink-3:#8392B0;
+  --acc:#124A9B;                       /* deep-blue brand accent */
+  /* brand */
+  --azure:#2863E9; --azure-2:#168BCB; --azure-d:#124A9B;
+  --cyan:#BFEAFF; --violet:#168BCB; /* blue-only alias for FLOW gradients */
+  --amber:#BFEAFF; --amber-d:#2863E9; /* favorites use the primary blue */
+  --ok:#16A34A; --ok-2:#22C55E; --bad:#E5484D;
+
+  /* canvas */
+  --page:linear-gradient(135deg,#DDEBFF 0%,#F3F8FF 50%,#DDF4FF 100%);
+  --app-bg:linear-gradient(165deg,#D8E8FF 0%,#F3F8FF 48%,#D8F2FF 100%);
+  --a1:rgba(40,99,233,.40); --a2:rgba(22,139,203,.34); --a3:rgba(191,234,255,.48); --a4:rgba(40,99,233,.12);
+
+  /* glass */
+  --glass:rgba(255,255,255,.56); --glass-2:rgba(255,255,255,.76); --sheet:rgba(255,255,255,.82);
+  --edge:rgba(255,255,255,.90); --hi:rgba(255,255,255,.95); --sheen:rgba(255,255,255,.34); --lift:rgba(255,255,255,.85);
+  --line:rgba(40,99,233,.16); --line-2:rgba(18,74,155,.08);
+  --field:rgba(255,255,255,.68); --field-focus:#FFFFFF;
+  --tint:rgba(40,99,233,.10); --tint-2:rgba(40,99,233,.17);
+  --ring:rgba(40,99,233,.24); --focus:#2863E9;
+  --scrim:rgba(14,26,64,.38);
+  --sh-card:0 32px 64px -30px rgba(18,74,155,.42),0 10px 26px -14px rgba(40,99,233,.18);
+  --sh-sm:0 8px 20px -10px rgba(18,74,155,.28);
+  --sh-dock:0 22px 44px -18px rgba(18,74,155,.42),0 6px 16px -8px rgba(15,23,42,.16);
+  --blur:22px;
+
+  --r-xl:32px; --r-lg:22px; --r-md:16px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.34,1.4,.5,1);
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root{--glass:rgba(255,255,255,.88);--glass-2:rgba(255,255,255,.94);--sheet:rgba(255,255,255,.97)}
+}
+@media (max-width:480px){:root{--blur:18px}}
+
+/* ---------- base ---------- */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:var(--font)}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);display:flex;justify-content:center;align-items:center;height:100vh;height:100dvh;overflow:hidden;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:12px}
+.i-field:focus-visible,.amt-in:focus-visible,.nm-in:focus-visible,.pin-in:focus-visible{outline:none}
+i[data-i]{display:inline-flex;align-items:center;justify-content:center;font-style:normal;line-height:1}
+.ic{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+::placeholder{color:var(--ink-3);opacity:1}
+
+/* ---------- shell ---------- */
+.app{width:100%;max-width:440px;height:100vh;height:100dvh;position:relative;overflow:hidden;display:flex;flex-direction:column;background:var(--app-bg);isolation:isolate}
+.app::before{content:"";position:absolute;inset:-30% -25%;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(36% 28% at 22% 20%,var(--a1),transparent 70%),
+    radial-gradient(34% 26% at 82% 38%,var(--a2),transparent 70%),
+    radial-gradient(40% 28% at 34% 84%,var(--a3),transparent 70%),
+    radial-gradient(26% 20% at 92% 92%,var(--a4),transparent 70%);
+  animation:flowDrift 30s ease-in-out infinite alternate;will-change:transform}
+@keyframes flowDrift{from{transform:translate3d(0,0,0) rotate(0) scale(1)}to{transform:translate3d(-4%,3%,0) rotate(7deg) scale(1.1)}}
+
+@media (min-width:720px) and (min-height:620px){
+  body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+    background:radial-gradient(30% 30% at 18% 24%,var(--a1),transparent 70%),radial-gradient(28% 28% at 84% 70%,var(--a2),transparent 70%),radial-gradient(26% 26% at 60% 12%,var(--a3),transparent 70%)}
+  .app{max-width:460px;height:min(920px,calc(100dvh - 40px));border-radius:46px;border:1px solid var(--edge);box-shadow:0 50px 100px -40px rgba(30,64,175,.55),0 18px 40px -20px rgba(15,23,42,.25)}
+}
+
+/* ---------- header ---------- */
+.hdr{position:relative;z-index:2;flex:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(18px + env(safe-area-inset-top,0px)) 20px 14px;color:var(--ink);animation:fxRise .7s var(--ease) backwards}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo{width:56px;height:56px;border-radius:18px;object-fit:cover;flex-shrink:0;border:1.5px solid var(--edge);box-shadow:0 14px 28px -10px rgba(37,99,235,.6),0 0 0 4px rgba(255,255,255,.28)}
+.h-title{font-size:30px;font-weight:800;letter-spacing:.04em;line-height:1.05;margin:0;color:var(--azure-d);background:linear-gradient(120deg,var(--azure-d),var(--azure) 55%,var(--violet));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.h-sub{font-size:13px;font-weight:600;color:var(--ink-2);margin-top:4px}
+.h-copy-btn{display:none;align-items:center;gap:7px;padding:10px 15px;border-radius:999px;border:1px solid var(--edge);background:var(--glass-2);-webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);color:var(--acc);font-size:14px;font-weight:800;cursor:pointer;box-shadow:var(--sh-sm);transition:transform .25s var(--spring),box-shadow .25s}
+.h-copy-btn.show{display:flex;animation:fxPop .45s var(--spring)}
+.h-copy-btn:active{transform:scale(.93)}
+
+/* ---------- scroll area + glass card ---------- */
+.cnt{position:relative;z-index:1;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;scroll-behavior:smooth;padding:6px 0 calc(112px + env(safe-area-inset-bottom,0px));
+  -webkit-mask-image:linear-gradient(#0000,#000 12px);mask-image:linear-gradient(#0000,#000 12px)}
+.cnt::-webkit-scrollbar{display:none}
+.card{position:relative;margin:0 14px;padding:16px 16px 18px;border-radius:var(--r-xl);
+  background:linear-gradient(165deg,var(--sheen),rgba(255,255,255,0) 42%),var(--glass);
+  -webkit-backdrop-filter:blur(var(--blur)) saturate(180%);backdrop-filter:blur(var(--blur)) saturate(180%);
+  border:1px solid var(--edge);box-shadow:var(--sh-card),inset 0 1px 0 var(--hi)}
+.card>*{animation:fxRise .6s var(--ease) backwards}
+.card>*:nth-child(1){animation-delay:.08s}.card>*:nth-child(2){animation-delay:.13s}.card>*:nth-child(3){animation-delay:.18s}
+.card>*:nth-child(4){animation-delay:.23s}.card>*:nth-child(5){animation-delay:.28s}.card>*:nth-child(6){animation-delay:.33s}
+.card>*:nth-child(n+7){animation-delay:.38s}
+@keyframes fxRise{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:none}}
+@keyframes fxPop{0%{transform:scale(.86)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+/* ---------- wallet switch (sliding thumb) ---------- */
+.prov-seg{position:relative;display:flex;gap:6px;padding:5px;margin:0 0 14px;border-radius:22px;background:var(--tint);border:1px solid var(--line)}
+.prov-seg button{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 6px;border:0;border-radius:17px;background:transparent;font-size:14px;font-weight:800;color:var(--ink-2);cursor:pointer;transition:color .3s var(--ease),background .3s,box-shadow .3s}
+.prov-seg button img{width:28px;height:28px;border-radius:9px;object-fit:contain;flex-shrink:0}
+.prov-seg button.on{color:var(--acc);background:var(--field-focus);box-shadow:0 6px 16px -6px rgba(37,99,235,.35)}
+@supports selector(:has(*)){
+  .prov-seg::before{content:"";position:absolute;z-index:0;top:5px;bottom:5px;inset-inline-start:5px;width:calc((100% - 16px)/2);border-radius:17px;background:var(--field-focus);box-shadow:0 8px 18px -8px rgba(37,99,235,.45);transition:transform .55s var(--spring)}
+  .prov-seg:has(button[data-prov="jawwal"].on)::before{transform:translateX(calc(-100% - 6px))}
+  .prov-seg button.on{background:transparent;box-shadow:none}
+}
+
+/* ---------- quick favourites ---------- */
+.q-fav-cnt{display:none;flex-wrap:nowrap;gap:12px;overflow-x:auto;margin:0 -4px 14px;padding:2px 4px 8px;scrollbar-width:none}
+.q-fav-cnt.show{display:flex}
+.q-fav-cnt::-webkit-scrollbar{display:none}
+.q-fav-circ{flex:none;width:66px;height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;background:linear-gradient(150deg,var(--lift),var(--tint-2));border:1px solid var(--edge);box-shadow:var(--sh-sm);transition:transform .35s var(--spring),box-shadow .3s}
+.q-fav-circ:active{transform:scale(.93)}
+.f-init{font-size:22px;font-weight:800;color:var(--acc);line-height:1.1}
+.f-sname{font-size:10px;font-weight:700;color:var(--ink-2);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56px}
+
+/* ---------- fields ---------- */
+.i-group{margin-bottom:16px}
+.i-group label{display:block;margin:0 0 7px;padding-inline-start:4px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.i-wrap{display:flex;align-items:center;padding:3px 14px;border-radius:20px;border:1.5px solid var(--line);background:var(--field);transition:border-color .25s,box-shadow .25s,background .25s}
+.i-ico{color:var(--azure);font-size:20px;margin-inline-end:8px;flex-shrink:0;display:flex}
+.i-field{flex:1;min-width:0;border:none;padding:12px 4px;font-size:21px;font-weight:800;letter-spacing:1px;outline:none;background:transparent;text-align:right;direction:ltr;color:var(--ink);font-variant-numeric:tabular-nums}
+.a-icos{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.q-clear{position:relative;width:28px;height:28px;display:none;align-items:center;justify-content:center;border:none;border-radius:50%;background:var(--tint-2);color:var(--ink-2);font-size:14px;cursor:pointer}
+.q-clear::after{content:"";position:absolute;inset:-8px}
+.q-clear.show{display:flex}
+.f-star{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:none;background:none;padding:0;color:var(--ink-3);font-size:22px;cursor:pointer;transition:transform .3s var(--spring),color .2s}
+.f-star.act{color:var(--amber-d);animation:fxPop .45s var(--spring)}
+.f-star:active{transform:scale(.85)}
+.chk-ico{color:var(--ok);font-size:22px;visibility:hidden;opacity:0;display:flex}
+.chk-ico.show{visibility:visible;opacity:1;animation:fxPop .45s var(--spring)}
+.err-msg{display:none;align-items:center;gap:5px;margin-top:7px;padding-inline-start:4px;color:var(--bad);font-size:12.5px;font-weight:700}
+.err-msg.show{display:flex}
+.i-wrap.err{border-color:var(--bad)}
+.i-wrap.suc{animation:fxRing .9s ease-out 1}
+@keyframes fxRing{0%{box-shadow:0 0 0 0 rgba(34,197,94,.45)}100%{box-shadow:0 0 0 12px rgba(34,197,94,0)}}
+
+.amt-row{display:flex;gap:10px;align-items:center}
+.calc-btn{flex:none;width:58px;height:58px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:20px;background:var(--tint);color:var(--acc);font-size:23px;cursor:pointer;transition:transform .3s var(--spring),background .2s}
+.calc-btn:active{transform:scale(.9);background:var(--tint-2)}
+.amt-in{flex:1;min-width:0;width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:20px;background:var(--field);color:var(--ink);font-size:32px;font-weight:800;text-align:center;direction:ltr;outline:none;font-variant-numeric:tabular-nums;transition:border-color .25s,box-shadow .25s,background .25s}
+.nm-in{width:100%;padding:12px 14px;margin-bottom:15px;border:1.5px solid var(--line);border-radius:18px;background:var(--field);color:var(--ink);font-size:16px;outline:none;text-align:right;transition:border-color .25s,box-shadow .25s,background .25s}
+
+/* flowing gradient hairline on focus */
+.i-wrap:focus-within,.amt-in:focus,.nm-in:focus,.pin-in:focus{
+  border-color:transparent;
+  background:linear-gradient(var(--field-focus),var(--field-focus)) padding-box,linear-gradient(110deg,var(--azure),var(--cyan),var(--violet),var(--azure)) border-box;
+  background-size:100% 100%,300% 100%;
+  box-shadow:0 0 0 4px var(--ring),0 12px 24px -14px rgba(37,99,235,.55);
+  animation:fxBorder 4s linear infinite}
+@keyframes fxBorder{to{background-position:0 0,-300% 0}}
+.i-wrap.err:focus-within,.pin-in.err:focus{background:var(--field-focus);border-color:var(--bad);animation:none;box-shadow:0 0 0 4px rgba(229,72,77,.18)}
+.pin-in.err{border-color:var(--bad)}
+
+.chips{display:flex;gap:8px;margin-top:10px}
+.chip{flex:1;padding:10px 0;border-radius:999px;border:1px solid var(--line);background:var(--tint);color:var(--acc);font-size:14px;font-weight:800;cursor:pointer;transition:transform .3s var(--spring),background .25s,color .25s,box-shadow .25s}
+.chip:active{transform:scale(.92)}
+.chip.on{background:linear-gradient(135deg,var(--azure-2),var(--azure-d));color:#fff;border-color:transparent;box-shadow:0 8px 18px -8px rgba(37,99,235,.7);animation:fxPop .4s var(--spring)}
+.summary{display:none;margin-top:16px;padding:11px 14px;border-radius:18px;background:var(--tint);border:1px solid var(--line);color:var(--acc);font-size:14px;font-weight:800;text-align:center}
+.summary.show{display:block;animation:fxRise .35s var(--ease) backwards}
+
+/* ---------- actions ---------- */
+.pay-options{display:flex;gap:12px;margin-top:18px}
+.btn-pay-opt{position:relative;overflow:hidden;flex:1;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;padding:16px 10px;border:0;border-radius:24px;color:#fff;cursor:pointer;transition:transform .35s var(--spring),box-shadow .3s,filter .3s}
+.btn-pay-opt.friend{background:linear-gradient(135deg,#2863E9,#168BCB);box-shadow:0 16px 28px -14px rgba(40,99,233,.78),inset 0 1px 0 rgba(255,255,255,.45)}
+.btn-pay-opt.merchant{background:linear-gradient(135deg,#124A9B,#168BCB);box-shadow:0 16px 28px -14px rgba(18,74,155,.82),inset 0 1px 0 rgba(255,255,255,.5)}
+.btn-pay-opt::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);transition:left .8s var(--ease);pointer-events:none}
+.btn-pay-opt i{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.24);font-size:21px;color:#fff!important;transition:transform .4s var(--spring)}
+.pay-label,.btn-pay-opt.friend .pay-label,.btn-pay-opt.merchant .pay-label{font-size:15px;font-weight:800;color:#fff}
+.btn-pay-opt:active{transform:scale(.95)}
+.hl{animation:hl 1s ease 3}
+@keyframes hl{50%{transform:scale(1.04);box-shadow:0 0 0 7px rgba(47,107,255,.32)}}
+
+.btn-img{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 14px;border-radius:20px;border:1px solid var(--line);background:var(--field);color:var(--ink);font-weight:800;cursor:pointer;transition:transform .3s var(--spring),background .25s,border-color .25s}
+.btn-img img{width:36px;max-width:36px;height:36px;object-fit:contain;border-radius:9px;flex-shrink:0}
+.btn-img:active{transform:scale(.97)}
+.btn-name{font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap}
+.btn-clr{width:100%;margin-top:12px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:20px;border:1px dashed rgba(229,72,77,.45);background:transparent;color:var(--bad);font-size:14.5px;font-weight:800;cursor:pointer;transition:transform .3s var(--spring),background .2s}
+.btn-clr:active{transform:scale(.97);background:rgba(229,72,77,.1)}
+#settings-modal .btn-clr[onclick*=Backup],#settings-modal .btn-clr[onclick*=bk-file]{color:var(--acc);background:var(--tint);border:1px solid var(--line)}
+.btn-primary{width:100%;margin-bottom:10px;padding:15px;display:flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:22px;background:linear-gradient(135deg,var(--azure-2),var(--azure-d));color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 14px 26px -14px rgba(37,99,235,.9),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .3s var(--spring),filter .2s}
+.btn-primary:active{transform:scale(.97);filter:brightness(.95)}
+.btn-inst{flex-shrink:0;padding:10px 18px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--azure-2),var(--azure-d));color:#fff;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 10px 20px -10px rgba(37,99,235,.9);transition:transform .3s var(--spring)}
+.btn-inst:active{transform:scale(.94)}
+.btn-inst:disabled{opacity:.55;box-shadow:none;cursor:default}
+.btn-contact{width:100%;margin-bottom:15px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:20px;border:1px solid var(--line);background:var(--tint);color:var(--acc);font-size:15px;font-weight:800;cursor:pointer}
+.m-cancel{width:100%;margin-top:10px;padding:14px;border-radius:22px;border:1px solid var(--line);background:var(--field);color:var(--ink-2);font-size:16px;font-weight:800;cursor:pointer}
+.opt-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 20px;margin-bottom:12px;border-radius:22px;border:1px solid var(--line);background:var(--field);color:var(--ink);font-size:16px;font-weight:800;text-decoration:none;cursor:pointer;transition:transform .3s var(--spring)}
+.opt-btn:active{transform:scale(.98)}
+#btn-pay-link{justify-content:space-between;gap:10px;padding:17px;border:0;color:#fff!important;font-size:17px;background:linear-gradient(135deg,#2863E9,#124A9B);box-shadow:0 16px 28px -14px rgba(18,74,155,.82),inset 0 1px 0 rgba(255,255,255,.45)}
+#btn-pay-label{display:flex;align-items:center;gap:8px;color:#fff}
+#btn-pay-link i,#btn-pay-link svg{color:#fff!important;stroke:currentColor}
+#btn-pay-link>i:last-child{opacity:.75}
+
+/* ---------- recent numbers ---------- */
+.recent-box{display:none;margin-top:16px}
+.recent-box.show{display:block}
+.recent-title{font-size:13px;font-weight:800;color:var(--ink-2);margin-bottom:8px;text-align:right}
+.recent-list{display:flex;flex-wrap:wrap;gap:8px}
+.rc-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 13px;border-radius:18px;border:1px solid var(--line);background:var(--field);cursor:pointer;transition:transform .3s var(--spring),border-color .2s}
+.rc-chip:active{transform:scale(.94);border-color:var(--azure)}
+.rc-name,.rc-meta{font-size:11px;color:var(--ink-2);max-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-num{font-size:14px;font-weight:800;color:var(--acc);font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr}
+
+/* ---------- dock (bottom navigation) ---------- */
+.nav{position:absolute;z-index:20;left:14px;right:14px;bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;padding:6px;isolation:isolate;border-radius:32px;background:var(--glass-2);-webkit-backdrop-filter:blur(var(--blur)) saturate(180%);backdrop-filter:blur(var(--blur)) saturate(180%);border:1px solid var(--edge);box-shadow:var(--sh-dock),inset 0 1px 0 var(--hi);animation:fxRise .7s var(--ease) .2s backwards}
+.nav::before{content:"";position:absolute;z-index:-1;top:6px;bottom:6px;inset-inline-start:6px;width:calc((100% - 12px)/4);border-radius:26px;background:linear-gradient(135deg,var(--azure-2),var(--azure-d));box-shadow:0 12px 24px -10px rgba(37,99,235,.85),inset 0 1px 0 rgba(255,255,255,.4);transform:translateX(calc(var(--i,0) * -100%));transition:transform .6s var(--spring)}
+.n-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;border-radius:26px;color:var(--ink-2);font-size:11.5px;font-weight:800;text-align:center;cursor:pointer;transition:color .3s var(--ease),transform .3s var(--spring)}
+.n-item i{width:30px;height:26px;font-size:21px;background:none;transition:transform .45s var(--spring)}
+.n-item.act{color:#fff}
+.n-item.act i{transform:translateY(-1px) scale(1.08)}
+.n-item:active{transform:scale(.92)}
+
+/* ---------- sheets / modals ---------- */
+.mod{position:absolute;inset:0;z-index:50;display:none;flex-direction:column;justify-content:flex-end;pointer-events:none;transition:display .4s allow-discrete}
+.mod::before{content:"";position:absolute;inset:0;background:var(--scrim);-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0);opacity:0;transition:opacity .4s var(--ease),backdrop-filter .4s var(--ease),-webkit-backdrop-filter .4s var(--ease)}
+.mod.show{display:flex;pointer-events:auto}
+.mod.show::before{opacity:1;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+@starting-style{.mod.show::before{opacity:0;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}}
+.m-cnt{position:relative;width:100%;max-height:90%;overflow-y:auto;text-align:center;padding:32px 20px calc(26px + env(safe-area-inset-bottom,0px));border-radius:34px 34px 0 0;background:var(--sheet);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:1px solid var(--edge);border-bottom:0;box-shadow:0 -24px 56px -24px rgba(30,64,175,.45),inset 0 1px 0 var(--hi);color:var(--ink);scrollbar-width:none;
+  transform:translate3d(0,56px,0) scale(.985);opacity:0;transition:transform .55s var(--spring),opacity .3s var(--ease)}
+.m-cnt::-webkit-scrollbar{display:none}
+.mod.show .m-cnt{transform:none;opacity:1}
+@starting-style{.mod.show .m-cnt{transform:translate3d(0,56px,0) scale(.985);opacity:0}}
+@supports not (transition-behavior:allow-discrete){
+  .mod.show::before{animation:fxFade .3s ease}
+  .mod.show .m-cnt{animation:fxSheet .5s var(--ease)}
+}
+@keyframes fxFade{from{opacity:0}to{opacity:1}}
+@keyframes fxSheet{from{transform:translate3d(0,56px,0);opacity:0}to{transform:none;opacity:1}}
+.m-cnt::before{content:"";position:absolute;top:10px;left:50%;width:42px;height:5px;border-radius:3px;background:var(--line);transform:translateX(-50%)}
+.m-title{margin:0 0 18px;color:var(--acc);font-size:20px;font-weight:800}
+.m-close{position:absolute;top:16px;left:16px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;padding:0;border:none;border-radius:50%;background:var(--tint-2);color:var(--acc);font-size:18px;cursor:pointer;transition:transform .3s var(--spring)}
+.m-close:active{transform:scale(.88)}
+#hist-modal{z-index:52}#fav-modal{z-index:58}#jp-modal,#pin-modal{z-index:55}#lockset-modal{z-index:56}#confirm-modal{z-index:95}
+
+.c-prev{margin-bottom:16px;padding:16px;border-radius:20px;border:1.5px dashed rgba(47,107,255,.5);background:linear-gradient(135deg,rgba(47,107,255,.10),rgba(34,211,238,.10));direction:ltr;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:17px;font-weight:800;color:var(--acc);word-break:break-all}
+
+/* calculator */
+.c-disp{margin-bottom:16px;padding:16px;min-height:74px;display:flex;align-items:flex-end;justify-content:flex-end;border-radius:22px;border:1px solid var(--line);background:var(--field);text-align:left;font-size:34px;font-weight:800;direction:ltr;overflow-x:auto;font-variant-numeric:tabular-nums}
+.c-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.c-key{padding:18px 0;border:none;border-radius:22px;font-size:22px;font-weight:800;cursor:pointer;transition:transform .25s var(--spring),filter .15s}
+.c-key:active{transform:scale(.92);filter:brightness(.95)}
+.c-num{background:var(--field);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.c-op{background:var(--tint-2);color:var(--acc)}
+.c-eq{background:linear-gradient(135deg,var(--azure-2),var(--azure-d));color:#fff;box-shadow:0 10px 20px -10px rgba(37,99,235,.9)}
+
+/* lists */
+.f-list{list-style:none;padding:0;margin:0;text-align:right;max-height:300px;overflow-y:auto;scrollbar-width:none}
+.f-list::-webkit-scrollbar{display:none}
+.f-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;margin-bottom:9px;border-radius:20px;border:1px solid var(--line);background:var(--field);cursor:pointer;transition:transform .3s var(--spring),border-color .2s}
+.f-item:active{transform:scale(.98);border-color:var(--azure)}
+.f-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f-name{font-size:15px;font-weight:800;color:var(--acc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.f-num{font-size:15px;color:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr}
+.h-meta{font-size:12px;color:var(--ink-3)}
+.h-item{align-items:center}
+.f-del{padding:8px;border:none;background:none;color:var(--bad);font-size:18px;cursor:pointer}
+.f-empty{padding:22px;text-align:center;color:var(--ink-3);font-size:15px}
+
+/* settings */
+.set-list{text-align:right}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line-2)}
+.set-row:last-child{border-bottom:none}
+.set-label{font-size:15px;font-weight:800}
+.set-sub{margin-top:2px;font-size:12px;font-weight:500;color:var(--ink-3)}
+.seg{display:flex;flex-shrink:0;padding:3px;border-radius:16px;background:var(--tint)}
+.seg button{padding:7px 12px;border:none;border-radius:13px;background:transparent;font-size:13px;font-weight:800;color:var(--ink-2);cursor:pointer;transition:background .3s,color .3s,box-shadow .3s}
+.seg button.on{background:var(--field-focus);color:var(--acc);box-shadow:0 4px 10px -4px rgba(37,99,235,.4)}
+.sw{position:relative;flex-shrink:0;width:52px;height:32px;padding:0;border:none;border-radius:16px;background:rgba(100,116,139,.35);cursor:pointer;transition:background .35s var(--ease)}
+.sw::after{content:"";position:absolute;top:3px;right:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(15,23,42,.3);transition:transform .45s var(--spring)}
+.sw.on{background:linear-gradient(135deg,var(--azure-2),var(--azure-d))}
+.sw.on::after{transform:translateX(-20px)}
+.set-btns{display:flex;gap:8px;flex-shrink:0}
+.about{margin:14px 0 4px;text-align:center;color:var(--ink-3);font-size:12px}
+
+/* ---------- prominent install action / movable settings row ---------- */
+.install-slot[hidden]{display:none!important;}
+.install-slot-main{margin:0 0 13px;padding:8px 13px;border:1px solid rgba(40,99,233,.24);border-radius:22px;background:linear-gradient(115deg,rgba(40,99,233,.13),rgba(22,139,203,.16),rgba(191,234,255,.24)),var(--glass);box-shadow:inset 0 1px 0 var(--hi),0 12px 24px -20px rgba(30,64,175,.42);animation:installCardIn .42s var(--ease) both;}
+.install-slot-main .set-row{min-height:58px;padding:7px 0;border:0;}
+.install-slot-main .set-label{color:var(--acc);font-size:15px;font-weight:900;}
+.install-slot-main .set-sub{font-size:12.5px;line-height:1.55;}
+.install-row .btn-inst{flex:none;min-width:82px;}
+.install-slot-extra .install-row{animation:settingsViewIn .28s var(--ease) both;}
+@keyframes installCardIn{from{opacity:0;transform:translateY(-8px) scale(.985)}to{opacity:1;transform:none}}
+/* ---------- settings: primary + additional views ---------- */
+.settings-cnt{text-align:right;padding-top:34px;}
+.settings-toolbar{position:relative;display:flex;align-items:center;justify-content:center;min-height:30px;margin:0 0 14px;}
+.settings-toolbar .m-title{margin:0;text-align:center;}
+.settings-back{position:absolute;right:0;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid var(--line);border-radius:14px;background:var(--tint);color:var(--acc);font-size:12px;font-weight:800;cursor:pointer;transition:transform .25s var(--spring),background .2s;}
+.settings-back[hidden]{display:none!important;}
+.settings-back:active{transform:scale(.94);}
+.settings-back .ic{width:15px;height:15px;}
+.settings-screen[hidden]{display:none!important;}
+.settings-screen{animation:settingsViewIn .34s var(--ease) both;}
+@keyframes settingsViewIn{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:none}}
+.settings-intro{margin:0 2px 12px;color:var(--ink-2);font-size:12.5px;line-height:1.7;font-weight:600;}
+.settings-section{margin:0 0 13px;padding:12px 14px 2px;border:1px solid var(--edge);border-radius:23px;background:linear-gradient(145deg,rgba(255,255,255,.38),rgba(191,234,255,.12)),var(--glass);box-shadow:inset 0 1px 0 var(--hi),0 12px 26px -22px rgba(30,64,175,.38);}
+.settings-section-title{display:flex;align-items:center;gap:9px;margin:0 0 4px;color:var(--acc);font-size:14px;font-weight:900;}
+.settings-section-icon{width:31px;height:31px;display:grid;place-items:center;flex:none;border-radius:11px;background:linear-gradient(140deg,rgba(40,99,233,.16),rgba(22,139,203,.13));border:1px solid rgba(40,99,233,.12);color:#2863E9;}
+.settings-section-icon .ic{width:17px;height:17px;}
+.settings-section .set-row:first-child{padding-top:10px;}
+.settings-section .set-row:last-child{border-bottom:0;}
+.settings-section .set-row>div:first-child{flex:1;min-width:0;}
+.settings-section .set-row{min-height:62px;padding:12px 0;}
+.settings-number-input{width:88px;max-width:38%;margin:0;padding:8px 9px;text-align:center;direction:ltr;font-size:13px;font-weight:800;}
+.settings-number-input.chips-number-input{width:142px;max-width:48%;}
+.settings-more{width:100%;display:flex;align-items:center;gap:11px;margin:2px 0 12px;padding:14px;border:1px solid rgba(40,99,233,.20);border-radius:22px;background:linear-gradient(120deg,rgba(40,99,233,.12),rgba(191,234,255,.27));color:var(--ink);text-align:right;cursor:pointer;box-shadow:inset 0 1px 0 var(--hi),0 12px 24px -22px rgba(30,64,175,.55);transition:transform .3s var(--spring),border-color .2s;}
+.settings-more:active{transform:scale(.985);}
+.settings-more-icon{width:42px;height:42px;display:grid;place-items:center;flex:none;border-radius:15px;border:1px solid rgba(255,255,255,.34);background:linear-gradient(145deg,#2863E9 0%,#168BCB 100%);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 8px 18px -12px rgba(40,99,233,.8);}
+.settings-more-icon .ic{width:21px;height:21px;stroke-width:1.9;}
+.settings-more:focus-visible{outline:3px solid rgba(40,99,233,.28);outline-offset:3px;}
+.settings-more:hover{border-color:rgba(40,99,233,.36);}
+.settings-more-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:2px;}
+.settings-more-copy strong{font-size:14px;font-weight:900;color:var(--acc);}
+.settings-more-copy small{font-size:11px;line-height:1.6;color:var(--ink-2);font-weight:600;}
+.settings-more-arrow{width:18px;height:18px;flex:none;color:var(--acc);transform:rotate(180deg);}
+.settings-share-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px;padding:12px 13px;border:1px solid var(--line);border-radius:21px;background:var(--field);}
+.settings-share-copy{display:flex;align-items:center;gap:9px;min-width:0;}
+.settings-share-copy>span:last-child{display:flex;flex-direction:column;min-width:0;}
+.settings-share-copy strong{font-size:13px;font-weight:900;}
+.settings-share-copy small{font-size:11px;color:var(--ink-3);line-height:1.55;}
+.settings-share-icon{width:34px;height:34px;display:grid;place-items:center;flex:none;border-radius:12px;background:var(--tint);color:var(--acc);}
+.settings-share-icon .ic{width:18px;height:18px;}
+.settings-share-row .btn-inst{display:flex;align-items:center;gap:6px;padding:9px 13px;font-size:12px;}
+.settings-share-row .btn-inst .ic{width:15px;height:15px;}
+.settings-note{margin:4px 0 10px;color:var(--ink-3);font-size:11px;line-height:1.65;}
+.settings-tools-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:4px 0 12px;}
+.settings-tool-btn{width:auto;min-width:0;margin:0;padding:10px 5px;display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid var(--line);border-radius:15px;background:var(--tint);color:var(--acc);font-size:11.5px;white-space:nowrap;}
+.settings-tool-btn .ic{width:15px;height:15px;}
+.settings-inline-danger{width:auto!important;flex:none;margin:0!important;padding:9px 12px!important;border-radius:14px!important;font-size:12px!important;white-space:nowrap;}
+.settings-inline-danger .ic{width:14px;height:14px;}
+.settings-backup-heading{border-bottom:0;min-height:48px!important;padding-bottom:6px!important;}
+.settings-favorites-row{border-top:1px solid var(--line-2);}
+.settings-about-section{padding-bottom:12px;}
+.settings-about-card{display:flex;flex-direction:column;gap:6px;padding:13px 2px 3px;text-align:right;}
+.settings-about-card strong{font-size:14px;font-weight:900;color:var(--ink);}
+.settings-about-card span{font-size:12px;line-height:1.8;color:var(--ink-2);}
+.settings-about-card small{font-size:11px;font-weight:800;color:var(--acc);}
+@media(max-width:370px){
+  .settings-cnt{padding-inline:15px;}
+  .settings-section{padding-inline:11px;}
+  .settings-section .set-row{gap:8px;}
+  .settings-section .set-label{font-size:13.5px;}
+  .settings-section .set-sub{font-size:10.5px;}
+  .settings-number-input.chips-number-input{width:116px;}
+  .settings-tools-grid{gap:5px;}
+  .settings-tool-btn{font-size:10.5px;}
+}
+
+
+/* ---------- share app / QR assembly ---------- */
+#share-modal{z-index:62}
+.share-cnt{max-height:92%;padding:38px 20px calc(24px + env(safe-area-inset-bottom,0px));}
+.share-heading{margin:0 auto 16px;text-align:center}
+.share-heading h3{margin:0 0 5px;color:var(--acc);font-size:21px;font-weight:900}
+.share-heading p{margin:0;color:var(--ink-2);font-size:13px;font-weight:600}
+.share-head-ic{width:48px;height:48px;display:grid;place-items:center;margin:0 auto 10px;border-radius:17px;color:#fff;background:linear-gradient(140deg,var(--azure-2),var(--azure-d));box-shadow:0 12px 24px -12px rgba(37,99,235,.85),inset 0 1px 0 rgba(255,255,255,.5)}
+.share-head-ic .ic{width:23px;height:23px}
+.share-link-card{padding:13px 14px 14px;border:1px solid var(--line);border-radius:21px;background:linear-gradient(135deg,var(--glass-2),var(--tint));box-shadow:inset 0 1px 0 var(--hi),var(--sh-sm);text-align:right}
+.share-link-label{margin-bottom:8px;color:var(--ink-2);font-size:12px;font-weight:800}
+.share-link-line{display:flex;align-items:center;gap:8px;min-width:0;direction:ltr}
+.share-url{flex:1;min-width:0;overflow:hidden;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:var(--field);color:var(--ink);font-family:ui-monospace,Consolas,monospace;font-size:12px;font-weight:700;direction:ltr;text-align:left;text-overflow:ellipsis;white-space:nowrap;user-select:all}
+.share-copy{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:91px;padding:11px 13px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--azure-2),var(--azure-d));color:#fff;font-size:13px;font-weight:900;cursor:pointer;box-shadow:0 9px 18px -11px rgba(37,99,235,.95);transition:transform .25s var(--spring),filter .2s}
+.share-copy:active{transform:scale(.94);filter:brightness(.96)}
+.share-copy .ic{width:16px;height:16px}
+.share-whatsapp{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:10px;padding:12px 15px;border:1px solid rgba(191,234,255,.52);border-radius:16px;background:linear-gradient(135deg,var(--azure-2),var(--azure-d));color:#fff!important;font-size:14px;font-weight:900;text-decoration:none;box-shadow:0 10px 20px -13px rgba(37,99,235,.9),inset 0 1px 0 rgba(255,255,255,.28);transition:transform .25s var(--spring),filter .2s}
+.share-whatsapp:active{transform:scale(.975);filter:brightness(.96)}
+.share-whatsapp .ic{width:19px;height:19px}
+.share-qr-label{display:flex;align-items:center;justify-content:center;gap:8px;margin:17px 0 10px;color:var(--ink-2);font-size:13px;font-weight:800}
+.share-qr-label::before,.share-qr-label::after{content:"";width:24px;height:1px;background:var(--line)}
+.share-qr-stage{position:relative;isolation:isolate;display:grid;place-items:center;width:min(62vw,236px);aspect-ratio:1;margin:0 auto 10px;padding:13px;border-radius:32px;border:1px solid var(--edge);background:linear-gradient(145deg,rgba(255,255,255,.66),rgba(47,107,255,.12) 55%,rgba(34,211,238,.20));box-shadow:0 22px 44px -24px rgba(30,64,175,.65),inset 0 1px 0 rgba(255,255,255,.9);overflow:hidden}
+.share-qr-stage::before{content:"";position:absolute;z-index:-1;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(47,107,255,.26),rgba(34,211,238,.10) 48%,transparent 72%);filter:blur(12px);animation:qrAura 3.2s ease-in-out infinite alternate}
+.share-qr-stage::after{content:"";position:absolute;z-index:3;top:-25%;left:8%;right:8%;height:18%;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(40,139,255,.06),rgba(34,211,238,.34),rgba(255,255,255,.58),transparent);filter:blur(2px);opacity:0;animation:qrScan 1.25s ease-in-out .18s both}
+.share-qr{position:relative;z-index:2;display:block;width:100%;height:100%;padding:8px;border-radius:17px;background:#fff;box-shadow:0 9px 22px -14px rgba(11,26,58,.45),inset 0 0 0 1px rgba(16,42,94,.08)}
+.share-qr .qr-bit{opacity:1;transform:none;transform-box:fill-box;transform-origin:center}
+#share-modal.show .share-qr .qr-bit{animation:qrAssemble .42s cubic-bezier(.2,.85,.25,1) var(--build-delay,0s) both}
+.share-hint{margin:0;color:var(--ink-3);font-size:12px;font-weight:600;line-height:1.7;text-align:center}
+@keyframes qrAssemble{0%{opacity:0;transform:scale(.12) rotate(-22deg);filter:blur(1.8px)}68%{opacity:1;transform:scale(1.13) rotate(2deg);filter:blur(0)}100%{opacity:1;transform:scale(1) rotate(0);filter:none}}
+@keyframes qrScan{0%{top:-25%;opacity:0}18%{opacity:.95}82%{opacity:.8}100%{top:108%;opacity:0}}
+@keyframes qrAura{from{transform:scale(.86);opacity:.55}to{transform:scale(1.12);opacity:1}}
+@media(max-height:640px){.share-cnt{max-height:96%;padding-top:34px;padding-bottom:18px}.share-heading{margin-bottom:11px}.share-head-ic{width:40px;height:40px;margin-bottom:7px}.share-qr-label{margin-top:11px}.share-qr-stage{width:min(52vw,190px);padding:10px}.share-hint{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.share-qr-stage::before,.share-qr-stage::after{animation:none!important}.share-qr .qr-bit,#share-modal.show .share-qr .qr-bit{opacity:1;transform:none;animation:none!important}}
+
+/* confirm */
+.cf-ic{width:62px;height:62px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;border-radius:50%;background:rgba(229,72,77,.12);color:var(--bad)}
+.cf-ic .ic{width:28px;height:28px}
+.cf-txt{margin:0 0 20px;color:var(--ink-2);font-size:15px;line-height:1.8}
+.cf-txt b{color:var(--ink)}
+.cf-del{width:100%;padding:15px;display:flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:22px;background:linear-gradient(135deg,#E5484D,#F26B6F);color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 14px 26px -14px rgba(229,72,77,.9)}
+.cf-del:active{filter:brightness(.94)}
+
+/* PIN */
+.pin-in{width:100%;margin-bottom:12px;padding:14px;border:1.5px solid var(--line);border-radius:20px;background:var(--field);color:var(--ink);font-size:26px;font-weight:800;letter-spacing:14px;text-align:center;direction:ltr;outline:none}
+.pin-lbl{margin-bottom:8px;text-align:right;color:var(--ink-2);font-size:14px;font-weight:700}
+.pin-note{margin-bottom:14px;padding:13px;border-radius:20px;background:var(--tint);border:1px solid var(--line);color:var(--acc);font-size:14px;line-height:1.7;text-align:center}
+.pin-chk{display:flex;align-items:center;gap:10px;margin:0 0 16px;text-align:right;font-size:14px;color:var(--ink-2);cursor:pointer}
+.pin-chk input{width:20px;height:20px;accent-color:var(--azure);flex-shrink:0}
+.jp-seg{display:flex;margin-bottom:16px;padding:4px;border-radius:18px;background:var(--tint)}
+.jp-seg button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 6px;border:none;border-radius:14px;background:transparent;font-size:15px;font-weight:800;color:var(--ink-2);cursor:pointer;transition:all .3s}
+.jp-seg button.on{background:var(--field-focus);color:var(--acc);box-shadow:0 4px 12px -6px rgba(37,99,235,.4)}
+
+/* lock screen */
+#lock-screen{display:none;position:absolute;inset:0;z-index:90;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;background:var(--app-bg);isolation:isolate;overflow:hidden}
+#lock-screen::before{content:"";position:absolute;inset:-20%;z-index:-1;background:radial-gradient(36% 28% at 25% 25%,var(--a1),transparent 70%),radial-gradient(34% 26% at 78% 70%,var(--a2),transparent 70%),radial-gradient(34% 26% at 40% 92%,var(--a3),transparent 70%);animation:flowDrift 24s ease-in-out infinite alternate}
+html.locked #lock-screen{display:flex}
+#lock-screen .logo{width:88px;height:88px;border-radius:28px;margin-bottom:18px}
+#lock-screen h3{margin:0 0 6px;color:var(--acc);font-size:23px;font-weight:800}
+#lock-screen p{margin:0 0 20px;color:var(--ink-2);font-size:14px}
+#lock-screen .pin-in{width:230px;max-width:100%}
+.lock-forgot{margin-top:10px;padding:10px;border:none;background:none;color:var(--acc);font-size:14px;font-weight:800;cursor:pointer}
+
+/* toast */
+.toast{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:50%;z-index:100;max-width:88%;padding:12px 20px;border-radius:999px;background:rgba(11,26,58,.82);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:14px;font-weight:700;text-align:center;box-shadow:0 18px 36px -14px rgba(0,0,0,.45);opacity:0;visibility:hidden;transform:translate(-50%,-220%);pointer-events:none;transition:transform .55s var(--spring),opacity .25s,visibility .25s}
+.toast.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* custom select (JS-enhanced) */
+select.cs-native{position:absolute!important;opacity:0;pointer-events:none;width:1px;height:1px;margin:0!important;padding:0!important;border:0!important}
+.cs-wrap{position:relative;flex:1;min-width:0;margin-bottom:15px}
+.cs-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border:1.5px solid var(--line);border-radius:18px;background:var(--field);font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;text-align:right;transition:border-color .2s,box-shadow .2s,transform .3s var(--spring)}
+.cs-btn:active{transform:scale(.98)}
+.cs-btn.open{border-color:var(--azure);box-shadow:0 0 0 4px var(--ring)}
+.cs-btn svg{flex:none;width:16px;height:16px;color:var(--azure);transition:transform .3s var(--spring)}
+.cs-btn.open svg{transform:rotate(180deg)}
+.cs-txt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-pop{position:absolute;z-index:80;max-height:240px;overflow-y:auto;padding:6px;border-radius:20px;background:var(--sheet);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);border:1px solid var(--edge);box-shadow:0 20px 44px -16px rgba(30,64,175,.5);animation:csIn .22s var(--ease);transform-origin:bottom center}
+.cs-opt{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border-radius:14px;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;transition:background .15s}
+.cs-opt:hover,.cs-opt:active{background:var(--tint)}
+.cs-opt.sel{background:var(--tint-2);color:var(--acc)}
+.cs-opt:focus{outline:2px solid var(--focus);outline-offset:-2px}
+.cs-opt svg{width:16px;height:16px;color:var(--azure);visibility:hidden}
+.cs-opt.sel svg{visibility:visible}
+@keyframes csIn{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+
+/* ---------- footer ---------- */
+.ftr{position:relative;margin:20px 14px 6px;padding:18px 16px 16px;border-radius:28px;text-align:center;font-size:13px;line-height:2;color:var(--ink-2);background:var(--glass);-webkit-backdrop-filter:blur(var(--blur)) saturate(170%);backdrop-filter:blur(var(--blur)) saturate(170%);border:1px solid var(--edge);box-shadow:var(--sh-sm),inset 0 1px 0 var(--hi)}
+.ftr::before{content:"";position:absolute;top:-1px;left:22%;right:22%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--azure),var(--cyan),var(--violet),transparent)}
+.ftr b{color:var(--acc);font-weight:800}
+.ftr-line{width:36px;height:4px;margin:0 auto 10px;border-radius:3px;background:var(--line)}
+.ftr-sign{margin:12px auto 0;padding:11px 16px;max-width:100%;border-radius:20px;border:1px solid var(--line);background:linear-gradient(135deg,rgba(40,99,233,.10),rgba(191,234,255,.24));color:var(--ink);font-size:14.5px;font-weight:800;line-height:1.8;letter-spacing:.2px;word-break:break-word;font-family:var(--font),var(--font-sym)}
+.ftr-sign span{font-family:var(--font),var(--font-sym)}
+
+/* ---------- very small phones ---------- */
+@media (max-width:370px){
+  .hdr{padding-inline:16px}
+  .card{margin:0 10px;padding:14px 12px 16px}
+  .ftr{margin-inline:10px}
+  .nav{left:10px;right:10px}
+  .prov-seg button{gap:5px;padding:9px 3px;font-size:12.5px;white-space:nowrap}
+  .prov-seg button img{width:22px;height:22px;border-radius:7px}
+  .i-wrap{padding:2px 10px}
+  .i-ico{margin-inline-end:4px;font-size:18px}
+  .i-field{font-size:18px;letter-spacing:0;padding:12px 2px}
+  .f-star{width:32px;height:32px;font-size:20px}
+  .q-clear{width:26px;height:26px}
+  .amt-in{font-size:28px}
+  .calc-btn{width:52px;height:52px}
+  .pay-options{gap:8px}
+  .btn-pay-opt{padding:14px 6px;gap:6px}
+  .btn-pay-opt i{width:36px;height:36px;font-size:18px}
+  .pay-label,.btn-pay-opt.friend .pay-label,.btn-pay-opt.merchant .pay-label{font-size:14px}
+  .btn-name{white-space:normal;text-align:center}
+}
+
+/* ---------- hover (pointer devices only) ---------- */
+@media (hover:hover){
+  .btn-pay-opt:hover{transform:translateY(-3px);filter:brightness(1.05)}
+  .btn-pay-opt:hover::after{left:130%}
+  .btn-pay-opt:hover i{transform:rotate(-8deg) scale(1.12)}
+  .btn-img:hover,.rc-chip:hover,.f-item:hover,.opt-btn:hover{border-color:var(--azure);transform:translateY(-2px)}
+  .chip:hover,.q-fav-circ:hover{transform:translateY(-3px)}
+  .q-fav-circ:hover{box-shadow:0 14px 26px -12px rgba(37,99,235,.6)}
+  .calc-btn:hover,.f-star:hover,.m-close:hover{transform:scale(1.08)}
+  .n-item:not(.act):hover{color:var(--acc)}
+  .btn-primary:hover,.btn-inst:hover,.h-copy-btn:hover{transform:translateY(-2px)}
+  .c-key:hover{filter:brightness(1.04)}
+  #btn-pay-link:hover{transform:translateY(-2px);filter:brightness(1.05)}
+}
+
+/* ---------- scroll-linked flow (progressive enhancement) ---------- */
+@supports (animation-timeline:scroll()){
+  .app{timeline-scope:--cnt}
+  .cnt{scroll-timeline:--cnt block}
+  .app::before{animation:flowDrift 30s ease-in-out infinite alternate,flowParallax linear both;animation-timeline:auto,--cnt}
+  @keyframes flowParallax{to{translate:0 -7%}}
+  .ftr{animation:fxRise linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
+}
+
+/* ---------- low-battery notice ---------- */
+.batt-note{position:absolute;z-index:85;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:28px;background:var(--glass-2);-webkit-backdrop-filter:blur(var(--blur)) saturate(180%);backdrop-filter:blur(var(--blur)) saturate(180%);border:1px solid var(--edge);box-shadow:var(--sh-dock),inset 0 1px 0 var(--hi);color:var(--ink);font-size:14px;font-weight:700;line-height:1.6;opacity:0;visibility:hidden;transform:translate3d(0,-130%,0);pointer-events:none;transition:transform .6s var(--spring),opacity .3s,visibility .3s}
+.batt-note.show{opacity:1;visibility:visible;transform:none;pointer-events:auto}
+.batt-ic{flex:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,162,77,.18);color:var(--amber-d);font-size:22px}
+.batt-txt{flex:1;min-width:0}
+.batt-x{flex:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink-2);font-size:15px;cursor:pointer;transition:transform .3s var(--spring)}
+.batt-x:active{transform:scale(.88)}
+.app:has(.batt-note.show) .toast{top:calc(84px + env(safe-area-inset-top,0px))}
+/* power-saving: calmer motion + lighter glass */
+html.lowpower{--blur:8px}
+html.lowpower .app::before,html.lowpower #lock-screen::before{animation:none!important}
+html.lowpower .i-wrap:focus-within,html.lowpower .amt-in:focus,html.lowpower .nm-in:focus,html.lowpower .pin-in:focus{animation:none}
+html.lowpower .btn-pay-opt::after{display:none}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .app::before,#lock-screen::before{animation:none!important}
+}
+</style>
+<style id="dark-css" media="(prefers-color-scheme:dark)">
+/* Dark theme = token overrides only (toggled by JS via this block's media attribute) */
+:root{
+  color-scheme:dark;
+  --ink:#EAF0FF; --ink-2:#A9B8D8; --ink-3:#7686A8; --acc:#BFEAFF;
+  --azure:#5B8CFF; --azure-2:#168BCB; --azure-d:#2863E9; --bad:#FF7A7F; --ok:#4ADE80;
+  --page:linear-gradient(135deg,#050A18 0%,#0A1430 55%,#071427 100%);
+  --app-bg:linear-gradient(165deg,#0A1226 0%,#0E1B3F 50%,#0A1A33 100%);
+  --a1:rgba(40,99,233,.36); --a2:rgba(22,139,203,.24); --a3:rgba(191,234,255,.18); --a4:rgba(40,99,233,.10);
+  --glass:rgba(22,32,64,.56); --glass-2:rgba(24,35,70,.76); --sheet:rgba(17,26,54,.90);
+  --edge:rgba(255,255,255,.12); --hi:rgba(255,255,255,.14); --sheen:rgba(255,255,255,.07); --lift:rgba(255,255,255,.14);
+  --line:rgba(140,170,255,.20); --line-2:rgba(255,255,255,.08);
+  --field:rgba(255,255,255,.07); --field-focus:#16224A;
+  --tint:rgba(110,150,255,.14); --tint-2:rgba(110,150,255,.22);
+  --ring:rgba(91,140,255,.34); --focus:#8DB4FF; --scrim:rgba(2,6,20,.62);
+  --sh-card:0 34px 70px -30px rgba(0,0,0,.75),0 10px 26px -14px rgba(0,0,0,.5);
+  --sh-sm:0 8px 20px -10px rgba(0,0,0,.6);
+  --sh-dock:0 22px 44px -16px rgba(0,0,0,.7),0 6px 16px -8px rgba(0,0,0,.5);
+}
+.h-title{background-image:linear-gradient(120deg,#BFEAFF,#5B8CFF 55%,#168BCB)}
+.logo{box-shadow:0 14px 28px -10px rgba(0,0,0,.7),0 0 0 4px rgba(255,255,255,.07)}
+.sw{background:rgba(148,163,184,.30)}
+.toast{background:rgba(32,46,88,.92)}
+.c-op{color:#BCD1FF}
+.chip{color:#BCD1FF}
+.chip.on{color:#fff}
+#pay-warn{background:rgba(255,162,77,.14)!important;color:#FFC98F!important;border-color:rgba(255,162,77,.35)!important}
+.cf-ic{background:rgba(255,122,127,.16)}
+.settings-section{background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(22,139,203,.05)),var(--glass)}
+.settings-section-icon{color:#8DB4FF;background:rgba(91,140,255,.14);border-color:rgba(140,170,255,.14)}
+.settings-more{background:linear-gradient(120deg,rgba(40,99,233,.20),rgba(22,139,203,.13))}
+</style>
+<script>
+var ICONS={'clock':'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>','lock':'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>','copy':'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>','mobile-screen-button':'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>','circle-check':'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>','xmark':'<path d="M18 6 6 18M6 6l12 12"/>','star':'<polygon fill="currentColor" points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>','star-o':'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>','circle-exclamation':'<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>','calculator':'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M16 14v4M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/>','user':'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>','store':'<path d="M3 9l1-5h16l1 5"/><path d="M4 9v11h16V9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M10 20v-5h4v5"/>','trash':'<path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>','arrow-right':'<path d="M5 12h14M12 5l7 7-7 7"/>','gear':'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>','phone':'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>','wallet':'<path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/><path d="M21 9H16a3 3 0 0 0 0 6h5z"/>','check':'<path d="M20 6 9 17l-5-5"/>','address-book':'<path d="M4 4h14a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 17c.8-2 2.5-3 4.5-3s3.7 1 4.5 3"/>','share':'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.2M8.6 13.4l6.8 4.2"/>','pen':'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>'};
+ICONS.palette='<path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 1.3-3.1 1.7 1.7 0 0 1 1.2-2.9H18a3 3 0 0 0 3-3c0-5-4-9-9-9Z"/><circle cx="7.5" cy="10" r=".8"/><circle cx="11" cy="7" r=".8"/><circle cx="15.5" cy="8.5" r=".8"/>';
+ICONS.whatsapp='<path d="M20.1 11.6a8.1 8.1 0 0 1-12 7.1L3.5 20l1.2-4.3a8.1 8.1 0 1 1 15.4-4.1Z"/><path d="M9 8.5c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.4.1-.5.3-.2.2-.7.7-.7 1.7s.7 1.9.8 2.1c.1.2 1.4 2.2 3.5 3 .5.2.9.4 1.2.4.5.2 1 .1 1.4.1.4-.1 1.3-.5 1.5-1 .2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3l-1.5-.7c-.2-.1-.4-.1-.5.1l-.7.8c-.1.2-.3.2-.5.1-.3-.1-1-.4-1.8-1.1-.7-.6-1.1-1.3-1.3-1.6-.1-.2 0-.3.1-.4l.4-.5c.1-.1.2-.3.2-.4.1-.2 0-.3 0-.5Z"/>';
+ICONS.sliders='<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M2 14h4M10 8h4M18 16h4"/>';
+ICONS['settings-more']='<path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.8 1.8 0 1 1-2.5-2.5l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3.6a1.8 1.8 0 1 1 0-3.6h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.8 1.8 0 1 1 2.5-2.5l.1.1a1.7 1.7 0 0 0 2.9-1.2v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/>';
+ICONS.shield='<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/>';
+ICONS.database='<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>';
+ICONS.smartphone='<rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M10 18h4"/>';
+ICONS.info='<circle cx="12" cy="12" r="10"/><path d="M12 11v5M12 7h.01"/>';
+ICONS.download='<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/>';
+ICONS.upload='<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5M12 3v12"/>';
+function ico(name){return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[name]||'')+'</svg>';}
+function renderIcons(){document.querySelectorAll('i[data-i]').forEach(function(el){if(!el.firstChild)el.innerHTML=ico(el.getAttribute('data-i'));});}
+function imgFallback(img,text){var s=document.createElement('span');s.textContent=text;s.style.cssText='font-weight:bold;font-size:14px;color:#2563EB';if(img.parentNode)img.parentNode.replaceChild(s,img);}
+document.addEventListener('DOMContentLoaded',renderIcons);
+</script>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="brand">
+      <img class="logo" src="icon-192.png" alt="شعار USSD" onerror="this.style.display='none'">
+      <div>
+        <div class="h-title">USSD</div>
+        <div class="h-sub">خدمة التحويل السريع</div>
+      </div>
+    </div>
+    <button class="h-copy-btn" id="top-copy-btn" onclick="copyCode()" type="button">
+      <i data-i="copy"></i> نسخ الرمز
+    </button>
+  </div>
+
+  <!-- Main -->
+  <div class="cnt">
+    <div class="card">
+
+      <!-- Wallet switch -->
+      <div class="prov-seg" role="group" aria-label="المحفظة">
+        <button type="button" data-prov="palpay" onclick="setProvider('palpay')"><img src="palpay.png" alt="" onerror="this.style.display='none'"><span>PalPay محفظتي</span></button>
+        <button type="button" data-prov="jawwal" onclick="setProvider('jawwal')"><img src="jawwal.png" alt="" onerror="this.style.display='none'"><span>Jawwal Pay</span></button>
+      </div>
+
+      <div class="q-fav-cnt" id="quick-fav-container"></div>
+
+      <!-- Phone -->
+      <div class="i-group">
+        <label for="phone">رقم الجوال</label>
+        <div class="i-wrap" id="phone-wrapper">
+          <div class="i-ico"><i data-i="mobile-screen-button"></i></div>
+          <input type="tel" id="phone" class="i-field" placeholder="05xxxxxxxx" inputmode="numeric" autocomplete="tel">
+          <div class="a-icos">
+            <i class="chk-ico" data-i="circle-check" id="check-icon"></i>
+            <button type="button" class="q-clear" id="quick-clear" onclick="quickClearPhone()" aria-label="مسح الرقم"><i data-i="xmark"></i></button>
+            <button type="button" class="f-star" id="fav-star-btn" onclick="toggleFavorite()" aria-label="المفضلة"><i data-i="star-o"></i></button>
+          </div>
+        </div>
+        <div class="err-msg" id="error-msg">
+          <i data-i="circle-exclamation"></i>
+          <span>رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام</span>
+        </div>
+      </div>
+
+      <!-- Amount -->
+      <div class="i-group">
+        <label for="amount">قيمة التحويل (₪)</label>
+        <div class="amt-row">
+          <button type="button" class="calc-btn" onclick="openCalculator()" aria-label="الآلة الحاسبة">
+            <i data-i="calculator"></i>
+          </button>
+          <input type="text" id="amount" class="amt-in" placeholder="0" inputmode="decimal" autocomplete="off" maxlength="12">
+        </div>
+        <div class="chips" id="chips">
+        </div>
+      </div>
+      <div class="i-group">
+        <label for="note">ملاحظة (اختياري)</label>
+        <input type="text" id="note" class="nm-in" maxlength="40" placeholder="مثال: إيجار" style="margin:0">
+      </div>
+
+      <div class="summary" id="summary" aria-live="polite"></div>
+
+
+      <!-- Two main pay options -->
+      <div class="pay-options">
+        <button class="btn-pay-opt friend" onclick="openFriendPayment()" type="button">
+          <i data-i="user" style="color:#2563EB;"></i>
+          <span class="pay-label">دفع لصديق</span>
+        </button>
+        <button class="btn-pay-opt merchant" onclick="openMerchantPayment()" type="button">
+          <i data-i="store" style="color:#F08B2D;"></i>
+          <span class="pay-label">دفع لتاجر</span>
+        </button>
+      </div>
+
+      <button class="btn-img" style="width:100%;margin-top:10px" onclick="openSvc()" type="button">
+        <i data-i="phone"></i><span class="btn-name">خدمات سريعة (استعلام الرصيد والقوائم)</span>
+      </button>
+
+      <button class="btn-clr" onclick="clearFields()" type="button">
+        <i data-i="trash"></i> مسح الحقول
+      </button>
+
+      <div class="recent-box" id="recent-box">
+        <div class="recent-title">آخر الأرقام التي حوّلت عليها</div>
+        <div class="recent-list" id="recent-list"></div>
+      </div>
+    </div>
+
+    <footer class="ftr">
+      <div class="ftr-line"></div>
+      <div class="ftr-sign" dir="rtl">تصميم وبرمجة: أَنَــسْ الجَعَلْ | 𝑨𝒏𝒂𝒔 𝑨𝒍-𝒋𝒂𝒂𝒍𓂆</div>
+    </footer>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <div class="n-item act" onclick="alert('أنت في التحويل')"><i data-i="arrow-right"></i>تحويل</div>
+    <div class="n-item" onclick="openHistory()"><i data-i="clock"></i>السجل</div>
+    <div class="n-item" onclick="openFavorites()"><i data-i="star"></i>المفضلة</div>
+    <div class="n-item" onclick="openSettings()"><i data-i="gear"></i>الإعدادات</div>
+  </div>
+
+  <!-- Payment Modal (dynamic) -->
+  <div id="modal" class="mod" onclick="closeModal(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title" id="modal-title">التحويل</h3>
+      <div class="c-prev" id="code-preview"><span id="code-text"></span></div>
+      <div id="pay-warn" style="display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:#fff4e5;color:#b45309;border:1px solid #fcd9a8;font-size:13px;font-weight:bold;white-space:pre-line"></div>
+      <a id="btn-pay-link" href="#" class="opt-btn">
+        <div id="btn-pay-label"><i data-i="phone"></i> التحويل</div>
+        <i data-i="phone" style="color:#FFFFFF"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Calculator Modal -->
+  <div id="calc-modal" class="mod" onclick="closeCalcModal(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeCalcModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title">الآلة الحاسبة</h3>
+      <div class="c-disp" id="calc-display">0</div>
+      <div class="c-grid">
+        <button class="c-key c-op" onclick="calcClear()" type="button">AC</button>
+        <button class="c-key c-op" onclick="calcBackspace()" type="button">⌫</button>
+        <button class="c-key c-op" onclick="calcPercent()" type="button">%</button>
+        <button class="c-key c-op" onclick="calcInput('/')" type="button">÷</button>
+        <button class="c-key c-num" onclick="calcInput('7')" type="button">7</button>
+        <button class="c-key c-num" onclick="calcInput('8')" type="button">8</button>
+        <button class="c-key c-num" onclick="calcInput('9')" type="button">9</button>
+        <button class="c-key c-op" onclick="calcInput('*')" type="button">×</button>
+        <button class="c-key c-num" onclick="calcInput('4')" type="button">4</button>
+        <button class="c-key c-num" onclick="calcInput('5')" type="button">5</button>
+        <button class="c-key c-num" onclick="calcInput('6')" type="button">6</button>
+        <button class="c-key c-op" onclick="calcInput('-')" type="button">-</button>
+        <button class="c-key c-num" onclick="calcInput('1')" type="button">1</button>
+        <button class="c-key c-num" onclick="calcInput('2')" type="button">2</button>
+        <button class="c-key c-num" onclick="calcInput('3')" type="button">3</button>
+        <button class="c-key c-op" onclick="calcInput('+')" type="button">+</button>
+        <button class="c-key c-num" style="grid-column:span 2;" onclick="calcInput('0')" type="button">0</button>
+        <button class="c-key c-num" onclick="calcInput('.')" type="button">.</button>
+        <button class="c-key c-eq" onclick="calcResult()" type="button">=</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Favorites Modal -->
+  <div id="fav-modal" class="mod" onclick="closeFavModal(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeFavModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title" style="color:#F08B2D;">جهاتي المفضلة</h3>
+      <ul class="f-list" id="fav-list"></ul>
+    </div>
+  </div>
+
+  <!-- Save Name Modal -->
+  <div id="name-modal" class="mod" onclick="closeNameModal(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeNameModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title">حفظ في المفضلة</h3>
+      <input type="text" id="user-name-input" class="nm-in" maxlength="40" placeholder="أدخل اسم المستخدم (اختياري)">
+      <button type="button" class="btn-contact" onclick="pickContact()">
+        <i data-i="address-book"></i> إضافة من جهات الاتصال
+      </button>
+      <button class="btn-primary" onclick="saveToFavorites()" type="button">حفظ</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="mod" onclick="closeSettings(event)">
+    <div class="m-cnt settings-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeSettings()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <div class="settings-toolbar">
+        <button type="button" class="settings-back" id="settings-back" onclick="showMainSettings()" hidden><i data-i="arrow-right"></i><span>رجوع</span></button>
+        <h3 class="m-title" id="settings-title">الإعدادات</h3>
+      </div>
+
+      <!-- Primary settings -->
+      <div class="settings-screen" id="settings-main-view">
+        <div class="install-slot install-slot-main" id="install-slot-main" aria-label="تثبيت التطبيق">
+          <div class="set-row install-row" id="install-row">
+            <div><div class="set-label">تثبيت التطبيق</div><div class="set-sub" id="install-sub">أضفه إلى شاشتك الرئيسية كتطبيق</div></div>
+            <button type="button" class="btn-inst" id="install-btn" onclick="installApp()">تثبيت</button>
+          </div>
+        </div>
+        <section class="settings-section">
+          <div class="settings-section-title"><span class="settings-section-icon"><i data-i="palette"></i></span><span>المظهر والتجربة</span></div>
+          <div class="set-list">
+            <div class="set-row">
+              <div><div class="set-label">المظهر</div><div class="set-sub">اختر طريقة عرض التطبيق</div></div>
+              <div class="seg" role="group" aria-label="المظهر">
+                <button type="button" data-theme="auto" onclick="setTheme('auto')">تلقائي</button>
+                <button type="button" data-theme="light" onclick="setTheme('light')">فاتح</button>
+                <button type="button" data-theme="dark" onclick="setTheme('dark')">داكن</button>
+              </div>
+            </div>
+            <div class="set-row">
+              <div><div class="set-label">الاهتزاز</div><div class="set-sub">اهتزاز خفيف عند الضغط والتنبيهات</div></div>
+              <button type="button" class="sw" id="sw-haptic" role="switch" aria-label="الاهتزاز" aria-checked="true" onclick="toggleHaptic()"></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <div class="settings-section-title"><span class="settings-section-icon"><i data-i="sliders"></i></span><span>إعدادات التحويل</span></div>
+          <div class="set-list">
+            <div class="set-row">
+              <div><div class="set-label">المبالغ السريعة</div><div class="set-sub">افصل بينها بفاصلة (حتى 6 مبالغ)</div></div>
+              <input id="chips-in" class="nm-in settings-number-input chips-number-input" dir="ltr" inputmode="numeric" aria-label="المبالغ السريعة" onchange="saveChips()">
+            </div>
+            <div class="set-row">
+              <div><div class="set-label">تنبيه المبلغ الكبير (₪)</div><div class="set-sub">0 = متوقف</div></div>
+              <input id="big-in" class="nm-in settings-number-input" dir="ltr" inputmode="numeric" aria-label="تنبيه المبلغ الكبير" onchange="saveLimits()">
+            </div>
+            <div class="set-row">
+              <div><div class="set-label">حد الصرف اليومي (₪)</div><div class="set-sub">0 = متوقف (يعتمد على السجل)</div></div>
+              <input id="day-in" class="nm-in settings-number-input" dir="ltr" inputmode="numeric" aria-label="حد الصرف اليومي" onchange="saveLimits()">
+            </div>
+            <div class="set-row">
+              <div><div class="set-label">حفظ سجل العمليات</div><div class="set-sub">يُحفظ على جهازك فقط (بدون الرمز السري)</div></div>
+              <button type="button" class="sw" id="sw-history" role="switch" aria-label="حفظ السجل" aria-checked="true" onclick="toggleHistoryKeep()"></button>
+            </div>
+          </div>
+        </section>
+
+        <button type="button" class="settings-more" onclick="showExtraSettings()">
+          <span class="settings-more-icon"><i data-i="gear"></i></span>
+          <span class="settings-more-copy"><strong>خيارات إضافية</strong><small>الأمان والخصوصية، النسخ الاحتياطي، وإدارة التطبيق</small></span>
+          <i class="settings-more-arrow" data-i="arrow-right"></i>
+        </button>
+
+        <div class="settings-share-row">
+          <div class="settings-share-copy"><span class="settings-share-icon"><i data-i="share"></i></span><span><strong>مشاركة التطبيق</strong><small>شارك رابط USSD أو اعرض رمز QR</small></span></div>
+          <button type="button" class="btn-inst" onclick="openShareModal()"><i data-i="share"></i> مشاركة</button>
+        </div>
+      </div>
+
+      <!-- Additional settings -->
+      <div class="settings-screen" id="settings-extra-view" hidden>
+        <p class="settings-intro">إعدادات متقدمة لإدارة حماية التطبيق وبياناتك وطريقة تثبيته.</p>
+
+        <section class="settings-section">
+          <div class="settings-section-title"><span class="settings-section-icon"><i data-i="shield"></i></span><span>الأمان والخصوصية</span></div>
+          <div class="set-list">
+            <div class="set-row">
+              <div><div class="set-label">قفل التطبيق</div><div class="set-sub" id="lock-sub">متوقف</div></div>
+              <div class="set-btns">
+                <button type="button" class="btn-inst" id="lock-main-btn" onclick="lockMainAction()">تفعيل</button>
+                <button type="button" class="btn-clr settings-inline-danger" id="lock-off-btn" onclick="lockDisable()" style="display:none">إيقاف</button>
+              </div>
+            </div>
+            <div class="set-row">
+              <div><div class="set-label">إخفاء الرمز السري في المعاينة</div><div class="set-sub">يظهر الرمز كنقاط (••••) في الكود المعروض</div></div>
+              <button type="button" class="sw" id="sw-hidepin" role="switch" aria-label="إخفاء الرمز" aria-checked="false" onclick="toggleHidePin()"></button>
+            </div>
+            <div class="set-row">
+              <div><div class="set-label">رمز جوال باي</div><div class="set-sub" id="pin-sub">غير محفوظ</div></div>
+              <div class="set-btns">
+                <button type="button" class="btn-inst" id="pin-edit-btn" onclick="openPinModal()">إضافة</button>
+                <button type="button" class="btn-clr settings-inline-danger" id="pin-del-btn" onclick="deleteSavedPin()" style="display:none">حذف</button>
+              </div>
+            </div>
+          </div>
+          <p class="settings-note">عند اختيار حفظ رمز جوال باي، يُخزَّن مشفّرًا محليًا إذا كان المتصفح يدعم التشفير الآمن. لا تشارك جهازك أو رمز قفله مع الآخرين.</p>
+        </section>
+
+        <section class="settings-section">
+          <div class="settings-section-title"><span class="settings-section-icon"><i data-i="database"></i></span><span>النسخ الاحتياطي والبيانات</span></div>
+          <div class="set-list">
+            <div class="set-row settings-backup-heading">
+              <div><div class="set-label">النسخة الاحتياطية</div><div class="set-sub">المفضلة والسجل والإعدادات، دون الرموز السرية أو قفل التطبيق</div></div>
+            </div>
+            <div class="settings-tools-grid">
+              <button type="button" class="btn-clr settings-tool-btn" onclick="exportBackup()"><i data-i="download"></i> تصدير ملف</button>
+              <button type="button" class="btn-clr settings-tool-btn" onclick="copyBackup()"><i data-i="copy"></i> نسخ النص</button>
+              <button type="button" class="btn-clr settings-tool-btn" onclick="document.getElementById('bk-file').click()"><i data-i="upload"></i> استيراد</button>
+            </div>
+            <input type="file" id="bk-file" accept=".json,application/json,text/plain" hidden onchange="importBackup(this)">
+            <div class="set-row settings-favorites-row">
+              <div><div class="set-label">إدارة المفضلة</div><div class="set-sub">عرض الأرقام المحفوظة أو حذفها</div></div>
+              <div class="set-btns">
+                <button type="button" class="btn-inst" onclick="openFavorites()">فتح</button>
+                <button type="button" class="btn-clr settings-inline-danger" onclick="clearAllFavorites()"><i data-i="trash"></i> مسح الكل</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <div class="settings-section-title"><span class="settings-section-icon"><i data-i="smartphone"></i></span><span>إدارة التطبيق</span></div>
+          <div class="set-list">
+
+            <div id="install-slot-extra" class="install-slot install-slot-extra" hidden></div>
+            <div class="set-row" id="apk-row">
+              <div><div class="set-label">تنزيل التطبيق (APK)</div><div class="set-sub">نسخة أندرويد تعمل بدون إنترنت</div></div>
+              <a class="btn-inst" id="apk-btn" href="USSD.apk" download="USSD.apk" style="text-decoration:none;display:inline-block">تنزيل</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-section settings-about-section">
+          <div class="settings-section-title"><span class="settings-section-icon"><i data-i="info"></i></span><span>حول التطبيق</span></div>
+          <div class="settings-about-card">
+            <strong>USSD — خدمة التحويل السريع</strong>
+            <span>أداة لتجهيز أكواد التحويل عبر USSD وعرضها قبل الاتصال، مع إمكانية حفظ المفضلة وسجل العمليات على الجهاز.</span>
+            <small>الإصدار 1.3</small>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jawwal Pay Modal (type + PIN) -->
+  <div id="jp-modal" class="mod" onclick="closeJpModal(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeJpModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title" id="jp-title">Jawwal Pay</h3>
+      <div id="jp-pin-box">
+        <div class="pin-lbl">أدخل الرمز السري (4 أرقام)</div>
+        <input type="password" id="jp-pin" class="pin-in" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="••••">
+        <label class="pin-chk"><input type="checkbox" id="jp-save"> حفظ الرمز مشفّرًا على هذا الجهاز (إذا كان المتصفح يدعم التشفير الآمن)</label>
+      </div>
+      <div id="jp-saved-box" class="pin-note" style="display:none">سيتم استخدام الرمز المحفوظ <b>••••</b><br><span style="font-size:12px;opacity:.8">يمكنك تعديله أو حذفه من الإعدادات</span></div>
+      <button class="btn-primary" onclick="continueJawwalPay()" type="button">متابعة</button>
+    </div>
+  </div>
+
+
+
+  <!-- Share App Modal -->
+  <div id="share-modal" class="mod" onclick="closeShareModal(event)" aria-label="مشاركة التطبيق">
+    <div class="m-cnt share-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeShareModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <div class="share-heading">
+        <div class="share-head-ic"><i data-i="share"></i></div>
+        <h3>مشاركة التطبيق</h3>
+        <p>شارك خدمة USSD مع أصدقائك بسهولة</p>
+      </div>
+      <div class="share-link-card">
+        <div class="share-link-label">رابط التطبيق</div>
+        <div class="share-link-line">
+          <span class="share-url" id="share-url" dir="ltr">https://anaspal.github.io/USSD/</span>
+          <button type="button" class="share-copy" id="share-copy-btn" onclick="copyShareLink()"><i data-i="copy"></i><span>نسخ</span></button>
+        </div>
+      </div>
+      <a class="share-whatsapp" id="share-whatsapp-btn" href="https://wa.me/?text=%D8%AC%D8%B1%D9%91%D8%A8%20%D8%AE%D8%AF%D9%85%D8%A9%20USSD%20%D9%84%D8%AA%D8%AC%D9%87%D9%8A%D8%B2%20%D8%A3%D9%83%D9%88%D8%A7%D8%AF%20%D8%A7%D9%84%D8%AA%D8%AD%D9%88%D9%8A%D9%84%20%D8%B9%D8%A8%D8%B1%20%D8%AC%D9%88%D8%A7%D9%84%20%D8%A8%D8%A7%D9%8A%20%D9%88PalPay%20%D9%88%D8%AA%D8%B4%D8%BA%D9%8A%D9%84%D9%87%D8%A7%20%D8%A8%D8%B3%D9%87%D9%88%D9%84%D8%A9%20%D9%85%D9%86%20%D9%87%D8%A7%D8%AA%D9%81%D9%83.%0Ahttps%3A%2F%2Fanaspal.github.io%2FUSSD%2F" target="_blank" rel="noopener noreferrer" aria-label="مشاركة رابط USSD إلى واتساب"><i data-i="whatsapp"></i><span>مشاركة إلى واتساب</span></a>
+      <div class="share-qr-label">أو امسح رمز QR لفتح الموقع</div>
+      <div class="share-qr-stage" aria-label="رمز QR للموقع">
+        <svg class="share-qr" id="share-qr" viewBox="0 0 37 37" role="img" aria-label="رمز QR لفتح موقع USSD" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" focusable="false"><rect width="37" height="37" fill="#FFFFFF"/><g fill="#102A5E"><rect class="qr-bit" x="4" y="4" width="1" height="1" style="--build-delay:0.0000s"/><rect class="qr-bit" x="5" y="4" width="1" height="1" style="--build-delay:0.0017s"/><rect class="qr-bit" x="6" y="4" width="1" height="1" style="--build-delay:0.0034s"/><rect class="qr-bit" x="7" y="4" width="1" height="1" style="--build-delay:0.0051s"/><rect class="qr-bit" x="8" y="4" width="1" height="1" style="--build-delay:0.0068s"/><rect class="qr-bit" x="9" y="4" width="1" height="1" style="--build-delay:0.0085s"/><rect class="qr-bit" x="10" y="4" width="1" height="1" style="--build-delay:0.0102s"/><rect class="qr-bit" x="12" y="4" width="1" height="1" style="--build-delay:0.0119s"/><rect class="qr-bit" x="13" y="4" width="1" height="1" style="--build-delay:0.0136s"/><rect class="qr-bit" x="14" y="4" width="1" height="1" style="--build-delay:0.0154s"/><rect class="qr-bit" x="16" y="4" width="1" height="1" style="--build-delay:0.0171s"/><rect class="qr-bit" x="17" y="4" width="1" height="1" style="--build-delay:0.0188s"/><rect class="qr-bit" x="18" y="4" width="1" height="1" style="--build-delay:0.0205s"/><rect class="qr-bit" x="20" y="4" width="1" height="1" style="--build-delay:0.0222s"/><rect class="qr-bit" x="21" y="4" width="1" height="1" style="--build-delay:0.0239s"/><rect class="qr-bit" x="22" y="4" width="1" height="1" style="--build-delay:0.0256s"/><rect class="qr-bit" x="24" y="4" width="1" height="1" style="--build-delay:0.0273s"/><rect class="qr-bit" x="26" y="4" width="1" height="1" style="--build-delay:0.0290s"/><rect class="qr-bit" x="27" y="4" width="1" height="1" style="--build-delay:0.0307s"/><rect class="qr-bit" x="28" y="4" width="1" height="1" style="--build-delay:0.0324s"/><rect class="qr-bit" x="29" y="4" width="1" height="1" style="--build-delay:0.0341s"/><rect class="qr-bit" x="30" y="4" width="1" height="1" style="--build-delay:0.0358s"/><rect class="qr-bit" x="31" y="4" width="1" height="1" style="--build-delay:0.0375s"/><rect class="qr-bit" x="32" y="4" width="1" height="1" style="--build-delay:0.0392s"/><rect class="qr-bit" x="32" y="5" width="1" height="1" style="--build-delay:0.0409s"/><rect class="qr-bit" x="26" y="5" width="1" height="1" style="--build-delay:0.0427s"/><rect class="qr-bit" x="24" y="5" width="1" height="1" style="--build-delay:0.0444s"/><rect class="qr-bit" x="23" y="5" width="1" height="1" style="--build-delay:0.0461s"/><rect class="qr-bit" x="21" y="5" width="1" height="1" style="--build-delay:0.0478s"/><rect class="qr-bit" x="19" y="5" width="1" height="1" style="--build-delay:0.0495s"/><rect class="qr-bit" x="18" y="5" width="1" height="1" style="--build-delay:0.0512s"/><rect class="qr-bit" x="17" y="5" width="1" height="1" style="--build-delay:0.0529s"/><rect class="qr-bit" x="15" y="5" width="1" height="1" style="--build-delay:0.0546s"/><rect class="qr-bit" x="14" y="5" width="1" height="1" style="--build-delay:0.0563s"/><rect class="qr-bit" x="10" y="5" width="1" height="1" style="--build-delay:0.0580s"/><rect class="qr-bit" x="4" y="5" width="1" height="1" style="--build-delay:0.0597s"/><rect class="qr-bit" x="4" y="6" width="1" height="1" style="--build-delay:0.0614s"/><rect class="qr-bit" x="6" y="6" width="1" height="1" style="--build-delay:0.0631s"/><rect class="qr-bit" x="7" y="6" width="1" height="1" style="--build-delay:0.0648s"/><rect class="qr-bit" x="8" y="6" width="1" height="1" style="--build-delay:0.0665s"/><rect class="qr-bit" x="10" y="6" width="1" height="1" style="--build-delay:0.0682s"/><rect class="qr-bit" x="14" y="6" width="1" height="1" style="--build-delay:0.0700s"/><rect class="qr-bit" x="18" y="6" width="1" height="1" style="--build-delay:0.0717s"/><rect class="qr-bit" x="21" y="6" width="1" height="1" style="--build-delay:0.0734s"/><rect class="qr-bit" x="23" y="6" width="1" height="1" style="--build-delay:0.0751s"/><rect class="qr-bit" x="26" y="6" width="1" height="1" style="--build-delay:0.0768s"/><rect class="qr-bit" x="28" y="6" width="1" height="1" style="--build-delay:0.0785s"/><rect class="qr-bit" x="29" y="6" width="1" height="1" style="--build-delay:0.0802s"/><rect class="qr-bit" x="30" y="6" width="1" height="1" style="--build-delay:0.0819s"/><rect class="qr-bit" x="32" y="6" width="1" height="1" style="--build-delay:0.0836s"/><rect class="qr-bit" x="32" y="7" width="1" height="1" style="--build-delay:0.0853s"/><rect class="qr-bit" x="30" y="7" width="1" height="1" style="--build-delay:0.0870s"/><rect class="qr-bit" x="29" y="7" width="1" height="1" style="--build-delay:0.0887s"/><rect class="qr-bit" x="28" y="7" width="1" height="1" style="--build-delay:0.0904s"/><rect class="qr-bit" x="26" y="7" width="1" height="1" style="--build-delay:0.0921s"/><rect class="qr-bit" x="22" y="7" width="1" height="1" style="--build-delay:0.0938s"/><rect class="qr-bit" x="16" y="7" width="1" height="1" style="--build-delay:0.0955s"/><rect class="qr-bit" x="15" y="7" width="1" height="1" style="--build-delay:0.0973s"/><rect class="qr-bit" x="14" y="7" width="1" height="1" style="--build-delay:0.0990s"/><rect class="qr-bit" x="12" y="7" width="1" height="1" style="--build-delay:0.1007s"/><rect class="qr-bit" x="10" y="7" width="1" height="1" style="--build-delay:0.1024s"/><rect class="qr-bit" x="8" y="7" width="1" height="1" style="--build-delay:0.1041s"/><rect class="qr-bit" x="7" y="7" width="1" height="1" style="--build-delay:0.1058s"/><rect class="qr-bit" x="6" y="7" width="1" height="1" style="--build-delay:0.1075s"/><rect class="qr-bit" x="4" y="7" width="1" height="1" style="--build-delay:0.1092s"/><rect class="qr-bit" x="4" y="8" width="1" height="1" style="--build-delay:0.1109s"/><rect class="qr-bit" x="6" y="8" width="1" height="1" style="--build-delay:0.1126s"/><rect class="qr-bit" x="7" y="8" width="1" height="1" style="--build-delay:0.1143s"/><rect class="qr-bit" x="8" y="8" width="1" height="1" style="--build-delay:0.1160s"/><rect class="qr-bit" x="10" y="8" width="1" height="1" style="--build-delay:0.1177s"/><rect class="qr-bit" x="12" y="8" width="1" height="1" style="--build-delay:0.1194s"/><rect class="qr-bit" x="13" y="8" width="1" height="1" style="--build-delay:0.1211s"/><rect class="qr-bit" x="14" y="8" width="1" height="1" style="--build-delay:0.1228s"/><rect class="qr-bit" x="15" y="8" width="1" height="1" style="--build-delay:0.1245s"/><rect class="qr-bit" x="21" y="8" width="1" height="1" style="--build-delay:0.1263s"/><rect class="qr-bit" x="22" y="8" width="1" height="1" style="--build-delay:0.1280s"/><rect class="qr-bit" x="26" y="8" width="1" height="1" style="--build-delay:0.1297s"/><rect class="qr-bit" x="28" y="8" width="1" height="1" style="--build-delay:0.1314s"/><rect class="qr-bit" x="29" y="8" width="1" height="1" style="--build-delay:0.1331s"/><rect class="qr-bit" x="30" y="8" width="1" height="1" style="--build-delay:0.1348s"/><rect class="qr-bit" x="32" y="8" width="1" height="1" style="--build-delay:0.1365s"/><rect class="qr-bit" x="32" y="9" width="1" height="1" style="--build-delay:0.1382s"/><rect class="qr-bit" x="26" y="9" width="1" height="1" style="--build-delay:0.1399s"/><rect class="qr-bit" x="23" y="9" width="1" height="1" style="--build-delay:0.1416s"/><rect class="qr-bit" x="22" y="9" width="1" height="1" style="--build-delay:0.1433s"/><rect class="qr-bit" x="20" y="9" width="1" height="1" style="--build-delay:0.1450s"/><rect class="qr-bit" x="15" y="9" width="1" height="1" style="--build-delay:0.1467s"/><rect class="qr-bit" x="14" y="9" width="1" height="1" style="--build-delay:0.1484s"/><rect class="qr-bit" x="12" y="9" width="1" height="1" style="--build-delay:0.1501s"/><rect class="qr-bit" x="10" y="9" width="1" height="1" style="--build-delay:0.1518s"/><rect class="qr-bit" x="4" y="9" width="1" height="1" style="--build-delay:0.1536s"/><rect class="qr-bit" x="4" y="10" width="1" height="1" style="--build-delay:0.1553s"/><rect class="qr-bit" x="5" y="10" width="1" height="1" style="--build-delay:0.1570s"/><rect class="qr-bit" x="6" y="10" width="1" height="1" style="--build-delay:0.1587s"/><rect class="qr-bit" x="7" y="10" width="1" height="1" style="--build-delay:0.1604s"/><rect class="qr-bit" x="8" y="10" width="1" height="1" style="--build-delay:0.1621s"/><rect class="qr-bit" x="9" y="10" width="1" height="1" style="--build-delay:0.1638s"/><rect class="qr-bit" x="10" y="10" width="1" height="1" style="--build-delay:0.1655s"/><rect class="qr-bit" x="12" y="10" width="1" height="1" style="--build-delay:0.1672s"/><rect class="qr-bit" x="14" y="10" width="1" height="1" style="--build-delay:0.1689s"/><rect class="qr-bit" x="16" y="10" width="1" height="1" style="--build-delay:0.1706s"/><rect class="qr-bit" x="18" y="10" width="1" height="1" style="--build-delay:0.1723s"/><rect class="qr-bit" x="20" y="10" width="1" height="1" style="--build-delay:0.1740s"/><rect class="qr-bit" x="22" y="10" width="1" height="1" style="--build-delay:0.1757s"/><rect class="qr-bit" x="24" y="10" width="1" height="1" style="--build-delay:0.1774s"/><rect class="qr-bit" x="26" y="10" width="1" height="1" style="--build-delay:0.1791s"/><rect class="qr-bit" x="27" y="10" width="1" height="1" style="--build-delay:0.1809s"/><rect class="qr-bit" x="28" y="10" width="1" height="1" style="--build-delay:0.1826s"/><rect class="qr-bit" x="29" y="10" width="1" height="1" style="--build-delay:0.1843s"/><rect class="qr-bit" x="30" y="10" width="1" height="1" style="--build-delay:0.1860s"/><rect class="qr-bit" x="31" y="10" width="1" height="1" style="--build-delay:0.1877s"/><rect class="qr-bit" x="32" y="10" width="1" height="1" style="--build-delay:0.1894s"/><rect class="qr-bit" x="24" y="11" width="1" height="1" style="--build-delay:0.1911s"/><rect class="qr-bit" x="22" y="11" width="1" height="1" style="--build-delay:0.1928s"/><rect class="qr-bit" x="21" y="11" width="1" height="1" style="--build-delay:0.1945s"/><rect class="qr-bit" x="20" y="11" width="1" height="1" style="--build-delay:0.1962s"/><rect class="qr-bit" x="19" y="11" width="1" height="1" style="--build-delay:0.1979s"/><rect class="qr-bit" x="17" y="11" width="1" height="1" style="--build-delay:0.1996s"/><rect class="qr-bit" x="16" y="11" width="1" height="1" style="--build-delay:0.2013s"/><rect class="qr-bit" x="15" y="11" width="1" height="1" style="--build-delay:0.2030s"/><rect class="qr-bit" x="13" y="11" width="1" height="1" style="--build-delay:0.2047s"/><rect class="qr-bit" x="12" y="11" width="1" height="1" style="--build-delay:0.2064s"/><rect class="qr-bit" x="4" y="12" width="1" height="1" style="--build-delay:0.2082s"/><rect class="qr-bit" x="8" y="12" width="1" height="1" style="--build-delay:0.2099s"/><rect class="qr-bit" x="10" y="12" width="1" height="1" style="--build-delay:0.2116s"/><rect class="qr-bit" x="11" y="12" width="1" height="1" style="--build-delay:0.2133s"/><rect class="qr-bit" x="12" y="12" width="1" height="1" style="--build-delay:0.2150s"/><rect class="qr-bit" x="13" y="12" width="1" height="1" style="--build-delay:0.2167s"/><rect class="qr-bit" x="15" y="12" width="1" height="1" style="--build-delay:0.2184s"/><rect class="qr-bit" x="17" y="12" width="1" height="1" style="--build-delay:0.2201s"/><rect class="qr-bit" x="21" y="12" width="1" height="1" style="--build-delay:0.2218s"/><rect class="qr-bit" x="23" y="12" width="1" height="1" style="--build-delay:0.2235s"/><rect class="qr-bit" x="25" y="12" width="1" height="1" style="--build-delay:0.2252s"/><rect class="qr-bit" x="26" y="12" width="1" height="1" style="--build-delay:0.2269s"/><rect class="qr-bit" x="27" y="12" width="1" height="1" style="--build-delay:0.2286s"/><rect class="qr-bit" x="28" y="12" width="1" height="1" style="--build-delay:0.2303s"/><rect class="qr-bit" x="29" y="12" width="1" height="1" style="--build-delay:0.2320s"/><rect class="qr-bit" x="32" y="12" width="1" height="1" style="--build-delay:0.2337s"/><rect class="qr-bit" x="32" y="13" width="1" height="1" style="--build-delay:0.2355s"/><rect class="qr-bit" x="31" y="13" width="1" height="1" style="--build-delay:0.2372s"/><rect class="qr-bit" x="30" y="13" width="1" height="1" style="--build-delay:0.2389s"/><rect class="qr-bit" x="29" y="13" width="1" height="1" style="--build-delay:0.2406s"/><rect class="qr-bit" x="28" y="13" width="1" height="1" style="--build-delay:0.2423s"/><rect class="qr-bit" x="27" y="13" width="1" height="1" style="--build-delay:0.2440s"/><rect class="qr-bit" x="26" y="13" width="1" height="1" style="--build-delay:0.2457s"/><rect class="qr-bit" x="25" y="13" width="1" height="1" style="--build-delay:0.2474s"/><rect class="qr-bit" x="22" y="13" width="1" height="1" style="--build-delay:0.2491s"/><rect class="qr-bit" x="21" y="13" width="1" height="1" style="--build-delay:0.2508s"/><rect class="qr-bit" x="20" y="13" width="1" height="1" style="--build-delay:0.2525s"/><rect class="qr-bit" x="18" y="13" width="1" height="1" style="--build-delay:0.2542s"/><rect class="qr-bit" x="17" y="13" width="1" height="1" style="--build-delay:0.2559s"/><rect class="qr-bit" x="16" y="13" width="1" height="1" style="--build-delay:0.2576s"/><rect class="qr-bit" x="15" y="13" width="1" height="1" style="--build-delay:0.2593s"/><rect class="qr-bit" x="9" y="13" width="1" height="1" style="--build-delay:0.2610s"/><rect class="qr-bit" x="7" y="13" width="1" height="1" style="--build-delay:0.2627s"/><rect class="qr-bit" x="6" y="13" width="1" height="1" style="--build-delay:0.2645s"/><rect class="qr-bit" x="4" y="13" width="1" height="1" style="--build-delay:0.2662s"/><rect class="qr-bit" x="5" y="14" width="1" height="1" style="--build-delay:0.2679s"/><rect class="qr-bit" x="10" y="14" width="1" height="1" style="--build-delay:0.2696s"/><rect class="qr-bit" x="14" y="14" width="1" height="1" style="--build-delay:0.2713s"/><rect class="qr-bit" x="16" y="14" width="1" height="1" style="--build-delay:0.2730s"/><rect class="qr-bit" x="20" y="14" width="1" height="1" style="--build-delay:0.2747s"/><rect class="qr-bit" x="22" y="14" width="1" height="1" style="--build-delay:0.2764s"/><rect class="qr-bit" x="25" y="14" width="1" height="1" style="--build-delay:0.2781s"/><rect class="qr-bit" x="26" y="14" width="1" height="1" style="--build-delay:0.2798s"/><rect class="qr-bit" x="28" y="14" width="1" height="1" style="--build-delay:0.2815s"/><rect class="qr-bit" x="32" y="14" width="1" height="1" style="--build-delay:0.2832s"/><rect class="qr-bit" x="32" y="15" width="1" height="1" style="--build-delay:0.2849s"/><rect class="qr-bit" x="31" y="15" width="1" height="1" style="--build-delay:0.2866s"/><rect class="qr-bit" x="29" y="15" width="1" height="1" style="--build-delay:0.2883s"/><rect class="qr-bit" x="27" y="15" width="1" height="1" style="--build-delay:0.2900s"/><rect class="qr-bit" x="26" y="15" width="1" height="1" style="--build-delay:0.2918s"/><rect class="qr-bit" x="25" y="15" width="1" height="1" style="--build-delay:0.2935s"/><rect class="qr-bit" x="22" y="15" width="1" height="1" style="--build-delay:0.2952s"/><rect class="qr-bit" x="21" y="15" width="1" height="1" style="--build-delay:0.2969s"/><rect class="qr-bit" x="18" y="15" width="1" height="1" style="--build-delay:0.2986s"/><rect class="qr-bit" x="16" y="15" width="1" height="1" style="--build-delay:0.3003s"/><rect class="qr-bit" x="13" y="15" width="1" height="1" style="--build-delay:0.3020s"/><rect class="qr-bit" x="7" y="15" width="1" height="1" style="--build-delay:0.3037s"/><rect class="qr-bit" x="6" y="15" width="1" height="1" style="--build-delay:0.3054s"/><rect class="qr-bit" x="4" y="15" width="1" height="1" style="--build-delay:0.3071s"/><rect class="qr-bit" x="4" y="16" width="1" height="1" style="--build-delay:0.3088s"/><rect class="qr-bit" x="5" y="16" width="1" height="1" style="--build-delay:0.3105s"/><rect class="qr-bit" x="8" y="16" width="1" height="1" style="--build-delay:0.3122s"/><rect class="qr-bit" x="9" y="16" width="1" height="1" style="--build-delay:0.3139s"/><rect class="qr-bit" x="10" y="16" width="1" height="1" style="--build-delay:0.3156s"/><rect class="qr-bit" x="11" y="16" width="1" height="1" style="--build-delay:0.3173s"/><rect class="qr-bit" x="13" y="16" width="1" height="1" style="--build-delay:0.3191s"/><rect class="qr-bit" x="14" y="16" width="1" height="1" style="--build-delay:0.3208s"/><rect class="qr-bit" x="17" y="16" width="1" height="1" style="--build-delay:0.3225s"/><rect class="qr-bit" x="18" y="16" width="1" height="1" style="--build-delay:0.3242s"/><rect class="qr-bit" x="19" y="16" width="1" height="1" style="--build-delay:0.3259s"/><rect class="qr-bit" x="20" y="16" width="1" height="1" style="--build-delay:0.3276s"/><rect class="qr-bit" x="21" y="16" width="1" height="1" style="--build-delay:0.3293s"/><rect class="qr-bit" x="22" y="16" width="1" height="1" style="--build-delay:0.3310s"/><rect class="qr-bit" x="24" y="16" width="1" height="1" style="--build-delay:0.3327s"/><rect class="qr-bit" x="25" y="16" width="1" height="1" style="--build-delay:0.3344s"/><rect class="qr-bit" x="27" y="16" width="1" height="1" style="--build-delay:0.3361s"/><rect class="qr-bit" x="31" y="16" width="1" height="1" style="--build-delay:0.3378s"/><rect class="qr-bit" x="32" y="17" width="1" height="1" style="--build-delay:0.3395s"/><rect class="qr-bit" x="31" y="17" width="1" height="1" style="--build-delay:0.3412s"/><rect class="qr-bit" x="30" y="17" width="1" height="1" style="--build-delay:0.3429s"/><rect class="qr-bit" x="29" y="17" width="1" height="1" style="--build-delay:0.3446s"/><rect class="qr-bit" x="28" y="17" width="1" height="1" style="--build-delay:0.3464s"/><rect class="qr-bit" x="27" y="17" width="1" height="1" style="--build-delay:0.3481s"/><rect class="qr-bit" x="26" y="17" width="1" height="1" style="--build-delay:0.3498s"/><rect class="qr-bit" x="22" y="17" width="1" height="1" style="--build-delay:0.3515s"/><rect class="qr-bit" x="21" y="17" width="1" height="1" style="--build-delay:0.3532s"/><rect class="qr-bit" x="12" y="17" width="1" height="1" style="--build-delay:0.3549s"/><rect class="qr-bit" x="9" y="17" width="1" height="1" style="--build-delay:0.3566s"/><rect class="qr-bit" x="8" y="17" width="1" height="1" style="--build-delay:0.3583s"/><rect class="qr-bit" x="4" y="18" width="1" height="1" style="--build-delay:0.3600s"/><rect class="qr-bit" x="6" y="18" width="1" height="1" style="--build-delay:0.3617s"/><rect class="qr-bit" x="7" y="18" width="1" height="1" style="--build-delay:0.3634s"/><rect class="qr-bit" x="9" y="18" width="1" height="1" style="--build-delay:0.3651s"/><rect class="qr-bit" x="10" y="18" width="1" height="1" style="--build-delay:0.3668s"/><rect class="qr-bit" x="12" y="18" width="1" height="1" style="--build-delay:0.3685s"/><rect class="qr-bit" x="14" y="18" width="1" height="1" style="--build-delay:0.3702s"/><rect class="qr-bit" x="16" y="18" width="1" height="1" style="--build-delay:0.3719s"/><rect class="qr-bit" x="17" y="18" width="1" height="1" style="--build-delay:0.3736s"/><rect class="qr-bit" x="18" y="18" width="1" height="1" style="--build-delay:0.3754s"/><rect class="qr-bit" x="19" y="18" width="1" height="1" style="--build-delay:0.3771s"/><rect class="qr-bit" x="22" y="18" width="1" height="1" style="--build-delay:0.3788s"/><rect class="qr-bit" x="25" y="18" width="1" height="1" style="--build-delay:0.3805s"/><rect class="qr-bit" x="26" y="18" width="1" height="1" style="--build-delay:0.3822s"/><rect class="qr-bit" x="29" y="18" width="1" height="1" style="--build-delay:0.3839s"/><rect class="qr-bit" x="30" y="18" width="1" height="1" style="--build-delay:0.3856s"/><rect class="qr-bit" x="32" y="18" width="1" height="1" style="--build-delay:0.3873s"/><rect class="qr-bit" x="32" y="19" width="1" height="1" style="--build-delay:0.3890s"/><rect class="qr-bit" x="31" y="19" width="1" height="1" style="--build-delay:0.3907s"/><rect class="qr-bit" x="27" y="19" width="1" height="1" style="--build-delay:0.3924s"/><rect class="qr-bit" x="26" y="19" width="1" height="1" style="--build-delay:0.3941s"/><rect class="qr-bit" x="24" y="19" width="1" height="1" style="--build-delay:0.3958s"/><rect class="qr-bit" x="22" y="19" width="1" height="1" style="--build-delay:0.3975s"/><rect class="qr-bit" x="21" y="19" width="1" height="1" style="--build-delay:0.3992s"/><rect class="qr-bit" x="20" y="19" width="1" height="1" style="--build-delay:0.4009s"/><rect class="qr-bit" x="19" y="19" width="1" height="1" style="--build-delay:0.4027s"/><rect class="qr-bit" x="17" y="19" width="1" height="1" style="--build-delay:0.4044s"/><rect class="qr-bit" x="15" y="19" width="1" height="1" style="--build-delay:0.4061s"/><rect class="qr-bit" x="14" y="19" width="1" height="1" style="--build-delay:0.4078s"/><rect class="qr-bit" x="11" y="19" width="1" height="1" style="--build-delay:0.4095s"/><rect class="qr-bit" x="9" y="19" width="1" height="1" style="--build-delay:0.4112s"/><rect class="qr-bit" x="8" y="19" width="1" height="1" style="--build-delay:0.4129s"/><rect class="qr-bit" x="7" y="19" width="1" height="1" style="--build-delay:0.4146s"/><rect class="qr-bit" x="6" y="19" width="1" height="1" style="--build-delay:0.4163s"/><rect class="qr-bit" x="7" y="20" width="1" height="1" style="--build-delay:0.4180s"/><rect class="qr-bit" x="8" y="20" width="1" height="1" style="--build-delay:0.4197s"/><rect class="qr-bit" x="10" y="20" width="1" height="1" style="--build-delay:0.4214s"/><rect class="qr-bit" x="11" y="20" width="1" height="1" style="--build-delay:0.4231s"/><rect class="qr-bit" x="13" y="20" width="1" height="1" style="--build-delay:0.4248s"/><rect class="qr-bit" x="15" y="20" width="1" height="1" style="--build-delay:0.4265s"/><rect class="qr-bit" x="17" y="20" width="1" height="1" style="--build-delay:0.4282s"/><rect class="qr-bit" x="23" y="20" width="1" height="1" style="--build-delay:0.4300s"/><rect class="qr-bit" x="25" y="20" width="1" height="1" style="--build-delay:0.4317s"/><rect class="qr-bit" x="31" y="20" width="1" height="1" style="--build-delay:0.4334s"/><rect class="qr-bit" x="32" y="21" width="1" height="1" style="--build-delay:0.4351s"/><rect class="qr-bit" x="31" y="21" width="1" height="1" style="--build-delay:0.4368s"/><rect class="qr-bit" x="29" y="21" width="1" height="1" style="--build-delay:0.4385s"/><rect class="qr-bit" x="28" y="21" width="1" height="1" style="--build-delay:0.4402s"/><rect class="qr-bit" x="27" y="21" width="1" height="1" style="--build-delay:0.4419s"/><rect class="qr-bit" x="26" y="21" width="1" height="1" style="--build-delay:0.4436s"/><rect class="qr-bit" x="20" y="21" width="1" height="1" style="--build-delay:0.4453s"/><rect class="qr-bit" x="18" y="21" width="1" height="1" style="--build-delay:0.4470s"/><rect class="qr-bit" x="17" y="21" width="1" height="1" style="--build-delay:0.4487s"/><rect class="qr-bit" x="16" y="21" width="1" height="1" style="--build-delay:0.4504s"/><rect class="qr-bit" x="13" y="21" width="1" height="1" style="--build-delay:0.4521s"/><rect class="qr-bit" x="9" y="21" width="1" height="1" style="--build-delay:0.4538s"/><rect class="qr-bit" x="8" y="21" width="1" height="1" style="--build-delay:0.4555s"/><rect class="qr-bit" x="5" y="21" width="1" height="1" style="--build-delay:0.4573s"/><rect class="qr-bit" x="4" y="21" width="1" height="1" style="--build-delay:0.4590s"/><rect class="qr-bit" x="8" y="22" width="1" height="1" style="--build-delay:0.4607s"/><rect class="qr-bit" x="9" y="22" width="1" height="1" style="--build-delay:0.4624s"/><rect class="qr-bit" x="10" y="22" width="1" height="1" style="--build-delay:0.4641s"/><rect class="qr-bit" x="11" y="22" width="1" height="1" style="--build-delay:0.4658s"/><rect class="qr-bit" x="13" y="22" width="1" height="1" style="--build-delay:0.4675s"/><rect class="qr-bit" x="14" y="22" width="1" height="1" style="--build-delay:0.4692s"/><rect class="qr-bit" x="15" y="22" width="1" height="1" style="--build-delay:0.4709s"/><rect class="qr-bit" x="16" y="22" width="1" height="1" style="--build-delay:0.4726s"/><rect class="qr-bit" x="20" y="22" width="1" height="1" style="--build-delay:0.4743s"/><rect class="qr-bit" x="21" y="22" width="1" height="1" style="--build-delay:0.4760s"/><rect class="qr-bit" x="22" y="22" width="1" height="1" style="--build-delay:0.4777s"/><rect class="qr-bit" x="24" y="22" width="1" height="1" style="--build-delay:0.4794s"/><rect class="qr-bit" x="27" y="22" width="1" height="1" style="--build-delay:0.4811s"/><rect class="qr-bit" x="28" y="22" width="1" height="1" style="--build-delay:0.4828s"/><rect class="qr-bit" x="30" y="22" width="1" height="1" style="--build-delay:0.4845s"/><rect class="qr-bit" x="32" y="22" width="1" height="1" style="--build-delay:0.4863s"/><rect class="qr-bit" x="32" y="23" width="1" height="1" style="--build-delay:0.4880s"/><rect class="qr-bit" x="31" y="23" width="1" height="1" style="--build-delay:0.4897s"/><rect class="qr-bit" x="28" y="23" width="1" height="1" style="--build-delay:0.4914s"/><rect class="qr-bit" x="26" y="23" width="1" height="1" style="--build-delay:0.4931s"/><rect class="qr-bit" x="25" y="23" width="1" height="1" style="--build-delay:0.4948s"/><rect class="qr-bit" x="22" y="23" width="1" height="1" style="--build-delay:0.4965s"/><rect class="qr-bit" x="21" y="23" width="1" height="1" style="--build-delay:0.4982s"/><rect class="qr-bit" x="18" y="23" width="1" height="1" style="--build-delay:0.4999s"/><rect class="qr-bit" x="15" y="23" width="1" height="1" style="--build-delay:0.5016s"/><rect class="qr-bit" x="14" y="23" width="1" height="1" style="--build-delay:0.5033s"/><rect class="qr-bit" x="7" y="23" width="1" height="1" style="--build-delay:0.5050s"/><rect class="qr-bit" x="6" y="23" width="1" height="1" style="--build-delay:0.5067s"/><rect class="qr-bit" x="4" y="24" width="1" height="1" style="--build-delay:0.5084s"/><rect class="qr-bit" x="5" y="24" width="1" height="1" style="--build-delay:0.5101s"/><rect class="qr-bit" x="10" y="24" width="1" height="1" style="--build-delay:0.5118s"/><rect class="qr-bit" x="13" y="24" width="1" height="1" style="--build-delay:0.5136s"/><rect class="qr-bit" x="17" y="24" width="1" height="1" style="--build-delay:0.5153s"/><rect class="qr-bit" x="18" y="24" width="1" height="1" style="--build-delay:0.5170s"/><rect class="qr-bit" x="19" y="24" width="1" height="1" style="--build-delay:0.5187s"/><rect class="qr-bit" x="24" y="24" width="1" height="1" style="--build-delay:0.5204s"/><rect class="qr-bit" x="25" y="24" width="1" height="1" style="--build-delay:0.5221s"/><rect class="qr-bit" x="26" y="24" width="1" height="1" style="--build-delay:0.5238s"/><rect class="qr-bit" x="27" y="24" width="1" height="1" style="--build-delay:0.5255s"/><rect class="qr-bit" x="28" y="24" width="1" height="1" style="--build-delay:0.5272s"/><rect class="qr-bit" x="29" y="24" width="1" height="1" style="--build-delay:0.5289s"/><rect class="qr-bit" x="32" y="24" width="1" height="1" style="--build-delay:0.5306s"/><rect class="qr-bit" x="32" y="25" width="1" height="1" style="--build-delay:0.5323s"/><rect class="qr-bit" x="28" y="25" width="1" height="1" style="--build-delay:0.5340s"/><rect class="qr-bit" x="24" y="25" width="1" height="1" style="--build-delay:0.5357s"/><rect class="qr-bit" x="23" y="25" width="1" height="1" style="--build-delay:0.5374s"/><rect class="qr-bit" x="16" y="25" width="1" height="1" style="--build-delay:0.5391s"/><rect class="qr-bit" x="12" y="25" width="1" height="1" style="--build-delay:0.5409s"/><rect class="qr-bit" x="4" y="26" width="1" height="1" style="--build-delay:0.5426s"/><rect class="qr-bit" x="5" y="26" width="1" height="1" style="--build-delay:0.5443s"/><rect class="qr-bit" x="6" y="26" width="1" height="1" style="--build-delay:0.5460s"/><rect class="qr-bit" x="7" y="26" width="1" height="1" style="--build-delay:0.5477s"/><rect class="qr-bit" x="8" y="26" width="1" height="1" style="--build-delay:0.5494s"/><rect class="qr-bit" x="9" y="26" width="1" height="1" style="--build-delay:0.5511s"/><rect class="qr-bit" x="10" y="26" width="1" height="1" style="--build-delay:0.5528s"/><rect class="qr-bit" x="12" y="26" width="1" height="1" style="--build-delay:0.5545s"/><rect class="qr-bit" x="15" y="26" width="1" height="1" style="--build-delay:0.5562s"/><rect class="qr-bit" x="17" y="26" width="1" height="1" style="--build-delay:0.5579s"/><rect class="qr-bit" x="18" y="26" width="1" height="1" style="--build-delay:0.5596s"/><rect class="qr-bit" x="19" y="26" width="1" height="1" style="--build-delay:0.5613s"/><rect class="qr-bit" x="23" y="26" width="1" height="1" style="--build-delay:0.5630s"/><rect class="qr-bit" x="24" y="26" width="1" height="1" style="--build-delay:0.5647s"/><rect class="qr-bit" x="26" y="26" width="1" height="1" style="--build-delay:0.5664s"/><rect class="qr-bit" x="28" y="26" width="1" height="1" style="--build-delay:0.5682s"/><rect class="qr-bit" x="29" y="26" width="1" height="1" style="--build-delay:0.5699s"/><rect class="qr-bit" x="30" y="26" width="1" height="1" style="--build-delay:0.5716s"/><rect class="qr-bit" x="32" y="26" width="1" height="1" style="--build-delay:0.5733s"/><rect class="qr-bit" x="28" y="27" width="1" height="1" style="--build-delay:0.5750s"/><rect class="qr-bit" x="24" y="27" width="1" height="1" style="--build-delay:0.5767s"/><rect class="qr-bit" x="23" y="27" width="1" height="1" style="--build-delay:0.5784s"/><rect class="qr-bit" x="22" y="27" width="1" height="1" style="--build-delay:0.5801s"/><rect class="qr-bit" x="21" y="27" width="1" height="1" style="--build-delay:0.5818s"/><rect class="qr-bit" x="17" y="27" width="1" height="1" style="--build-delay:0.5835s"/><rect class="qr-bit" x="16" y="27" width="1" height="1" style="--build-delay:0.5852s"/><rect class="qr-bit" x="15" y="27" width="1" height="1" style="--build-delay:0.5869s"/><rect class="qr-bit" x="13" y="27" width="1" height="1" style="--build-delay:0.5886s"/><rect class="qr-bit" x="10" y="27" width="1" height="1" style="--build-delay:0.5903s"/><rect class="qr-bit" x="4" y="27" width="1" height="1" style="--build-delay:0.5920s"/><rect class="qr-bit" x="4" y="28" width="1" height="1" style="--build-delay:0.5937s"/><rect class="qr-bit" x="6" y="28" width="1" height="1" style="--build-delay:0.5955s"/><rect class="qr-bit" x="7" y="28" width="1" height="1" style="--build-delay:0.5972s"/><rect class="qr-bit" x="8" y="28" width="1" height="1" style="--build-delay:0.5989s"/><rect class="qr-bit" x="10" y="28" width="1" height="1" style="--build-delay:0.6006s"/><rect class="qr-bit" x="12" y="28" width="1" height="1" style="--build-delay:0.6023s"/><rect class="qr-bit" x="13" y="28" width="1" height="1" style="--build-delay:0.6040s"/><rect class="qr-bit" x="14" y="28" width="1" height="1" style="--build-delay:0.6057s"/><rect class="qr-bit" x="16" y="28" width="1" height="1" style="--build-delay:0.6074s"/><rect class="qr-bit" x="17" y="28" width="1" height="1" style="--build-delay:0.6091s"/><rect class="qr-bit" x="19" y="28" width="1" height="1" style="--build-delay:0.6108s"/><rect class="qr-bit" x="23" y="28" width="1" height="1" style="--build-delay:0.6125s"/><rect class="qr-bit" x="24" y="28" width="1" height="1" style="--build-delay:0.6142s"/><rect class="qr-bit" x="25" y="28" width="1" height="1" style="--build-delay:0.6159s"/><rect class="qr-bit" x="26" y="28" width="1" height="1" style="--build-delay:0.6176s"/><rect class="qr-bit" x="27" y="28" width="1" height="1" style="--build-delay:0.6193s"/><rect class="qr-bit" x="28" y="28" width="1" height="1" style="--build-delay:0.6210s"/><rect class="qr-bit" x="29" y="28" width="1" height="1" style="--build-delay:0.6227s"/><rect class="qr-bit" x="31" y="28" width="1" height="1" style="--build-delay:0.6245s"/><rect class="qr-bit" x="32" y="28" width="1" height="1" style="--build-delay:0.6262s"/><rect class="qr-bit" x="31" y="29" width="1" height="1" style="--build-delay:0.6279s"/><rect class="qr-bit" x="19" y="29" width="1" height="1" style="--build-delay:0.6296s"/><rect class="qr-bit" x="18" y="29" width="1" height="1" style="--build-delay:0.6313s"/><rect class="qr-bit" x="16" y="29" width="1" height="1" style="--build-delay:0.6330s"/><rect class="qr-bit" x="15" y="29" width="1" height="1" style="--build-delay:0.6347s"/><rect class="qr-bit" x="14" y="29" width="1" height="1" style="--build-delay:0.6364s"/><rect class="qr-bit" x="10" y="29" width="1" height="1" style="--build-delay:0.6381s"/><rect class="qr-bit" x="8" y="29" width="1" height="1" style="--build-delay:0.6398s"/><rect class="qr-bit" x="7" y="29" width="1" height="1" style="--build-delay:0.6415s"/><rect class="qr-bit" x="6" y="29" width="1" height="1" style="--build-delay:0.6432s"/><rect class="qr-bit" x="4" y="29" width="1" height="1" style="--build-delay:0.6449s"/><rect class="qr-bit" x="4" y="30" width="1" height="1" style="--build-delay:0.6466s"/><rect class="qr-bit" x="6" y="30" width="1" height="1" style="--build-delay:0.6483s"/><rect class="qr-bit" x="7" y="30" width="1" height="1" style="--build-delay:0.6500s"/><rect class="qr-bit" x="8" y="30" width="1" height="1" style="--build-delay:0.6518s"/><rect class="qr-bit" x="10" y="30" width="1" height="1" style="--build-delay:0.6535s"/><rect class="qr-bit" x="13" y="30" width="1" height="1" style="--build-delay:0.6552s"/><rect class="qr-bit" x="15" y="30" width="1" height="1" style="--build-delay:0.6569s"/><rect class="qr-bit" x="16" y="30" width="1" height="1" style="--build-delay:0.6586s"/><rect class="qr-bit" x="18" y="30" width="1" height="1" style="--build-delay:0.6603s"/><rect class="qr-bit" x="19" y="30" width="1" height="1" style="--build-delay:0.6620s"/><rect class="qr-bit" x="20" y="30" width="1" height="1" style="--build-delay:0.6637s"/><rect class="qr-bit" x="23" y="30" width="1" height="1" style="--build-delay:0.6654s"/><rect class="qr-bit" x="25" y="30" width="1" height="1" style="--build-delay:0.6671s"/><rect class="qr-bit" x="29" y="30" width="1" height="1" style="--build-delay:0.6688s"/><rect class="qr-bit" x="30" y="30" width="1" height="1" style="--build-delay:0.6705s"/><rect class="qr-bit" x="31" y="30" width="1" height="1" style="--build-delay:0.6722s"/><rect class="qr-bit" x="32" y="30" width="1" height="1" style="--build-delay:0.6739s"/><rect class="qr-bit" x="32" y="31" width="1" height="1" style="--build-delay:0.6756s"/><rect class="qr-bit" x="31" y="31" width="1" height="1" style="--build-delay:0.6773s"/><rect class="qr-bit" x="29" y="31" width="1" height="1" style="--build-delay:0.6791s"/><rect class="qr-bit" x="24" y="31" width="1" height="1" style="--build-delay:0.6808s"/><rect class="qr-bit" x="22" y="31" width="1" height="1" style="--build-delay:0.6825s"/><rect class="qr-bit" x="21" y="31" width="1" height="1" style="--build-delay:0.6842s"/><rect class="qr-bit" x="19" y="31" width="1" height="1" style="--build-delay:0.6859s"/><rect class="qr-bit" x="18" y="31" width="1" height="1" style="--build-delay:0.6876s"/><rect class="qr-bit" x="17" y="31" width="1" height="1" style="--build-delay:0.6893s"/><rect class="qr-bit" x="15" y="31" width="1" height="1" style="--build-delay:0.6910s"/><rect class="qr-bit" x="14" y="31" width="1" height="1" style="--build-delay:0.6927s"/><rect class="qr-bit" x="10" y="31" width="1" height="1" style="--build-delay:0.6944s"/><rect class="qr-bit" x="4" y="31" width="1" height="1" style="--build-delay:0.6961s"/><rect class="qr-bit" x="4" y="32" width="1" height="1" style="--build-delay:0.6978s"/><rect class="qr-bit" x="5" y="32" width="1" height="1" style="--build-delay:0.6995s"/><rect class="qr-bit" x="6" y="32" width="1" height="1" style="--build-delay:0.7012s"/><rect class="qr-bit" x="7" y="32" width="1" height="1" style="--build-delay:0.7029s"/><rect class="qr-bit" x="8" y="32" width="1" height="1" style="--build-delay:0.7046s"/><rect class="qr-bit" x="9" y="32" width="1" height="1" style="--build-delay:0.7064s"/><rect class="qr-bit" x="10" y="32" width="1" height="1" style="--build-delay:0.7081s"/><rect class="qr-bit" x="12" y="32" width="1" height="1" style="--build-delay:0.7098s"/><rect class="qr-bit" x="17" y="32" width="1" height="1" style="--build-delay:0.7115s"/><rect class="qr-bit" x="24" y="32" width="1" height="1" style="--build-delay:0.7132s"/><rect class="qr-bit" x="26" y="32" width="1" height="1" style="--build-delay:0.7149s"/><rect class="qr-bit" x="28" y="32" width="1" height="1" style="--build-delay:0.7166s"/><rect class="qr-bit" x="29" y="32" width="1" height="1" style="--build-delay:0.7183s"/><rect class="qr-bit" x="31" y="32" width="1" height="1" style="--build-delay:0.7200s"/></g></svg>
+      </div>
+      <p class="share-hint">افتح كاميرا هاتفك ووجّهها نحو الرمز للوصول إلى USSD مباشرة</p>
+    </div>
+  </div>
+
+    <!-- PIN edit Modal (settings) -->
+  <div id="pin-modal" class="mod" onclick="closePinModal(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closePinModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title">رمز جوال باي</h3>
+      <div class="pin-lbl">الرمز السري الجديد (4 أرقام)</div>
+      <input type="password" id="pin-edit" class="pin-in" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="••••">
+      <button class="btn-primary" onclick="savePinFromSettings()" type="button">حفظ</button>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div id="svc-modal" class="mod" onclick="closeSvc(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeSvc()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title">خدمات سريعة</h3>
+      <div class="set-sub" style="margin-bottom:10px">اتصل بالرمز وسيطلب منك النظام إدخال الرقم السري (PIN) في نافذة الشبكة. يمكنك تعديل أي رمز وسيُحفظ على جهازك.</div>
+      <ul class="f-list" id="svc-list" style="max-height:380px"></ul>
+    </div>
+  </div>
+
+  <div id="hist-modal" class="mod" onclick="closeHistModal(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeHistModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title">سجل العمليات</h3>
+      <div class="summary show" id="hist-total" style="margin:0 0 10px"></div>
+      <input type="search" id="hist-q" class="nm-in" style="margin-bottom:8px" placeholder="بحث بالاسم أو الرقم أو الملاحظة" oninput="renderHistory()">
+      <div style="display:flex;gap:8px">
+        <select id="hist-kind" class="nm-in" onchange="renderHistory()">
+          <option value="">كل الأنواع</option><option value="friend">دفع لصديق</option><option value="merchant">دفع لتاجر</option><option value="jw">جوال باي</option>
+        </select>
+        <select id="hist-when" class="nm-in" onchange="renderHistory()">
+          <option value="">كل الفترات</option><option value="today">اليوم</option><option value="week">آخر 7 أيام</option><option value="month">هذا الشهر</option>
+        </select>
+      </div>
+      <ul class="f-list" id="hist-list" style="max-height:340px"></ul>
+      <button type="button" class="btn-clr" id="hist-clear" onclick="clearHistory()"><i data-i="trash"></i> مسح السجل</button>
+    </div>
+  </div>
+
+  <!-- App lock setup Modal -->
+  <div id="lockset-modal" class="mod" onclick="closeLockSet(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeLockSet()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title" id="ls-title">قفل التطبيق</h3>
+      <div class="pin-lbl" id="ls-label"></div>
+      <input type="password" id="ls-input" class="pin-in" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="••••">
+    </div>
+  </div>
+
+  <!-- Options Modal -->
+  <div id="opt-modal" class="mod" onclick="closeOptModal(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <button type="button" class="m-close" onclick="closeOptModal()" aria-label="إغلاق"><i data-i="xmark"></i></button>
+      <h3 class="m-title">خيارات المفضلة</h3>
+      <button class="btn-primary" onclick="editFavName()" type="button">
+        <i data-i="pen"></i> تعديل الاسم
+      </button>
+      <button class="btn-clr" style="margin-top:0;" onclick="confirmDeleteFav()" type="button">
+        <i data-i="trash"></i> حذف الرقم
+      </button>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div id="confirm-modal" class="mod" onclick="closeConfirm(event)">
+    <div class="m-cnt" onclick="event.stopPropagation()">
+      <div class="cf-ic"><i data-i="trash"></i></div>
+      <h3 class="m-title" id="cf-title" style="color:#D32F2F;margin-bottom:10px">تأكيد الحذف</h3>
+      <p class="cf-txt" id="cf-text"></p>
+      <button type="button" class="cf-del" id="cf-yes"><i data-i="trash"></i> نعم، احذف</button>
+      <button type="button" class="m-cancel" onclick="closeConfirm()">إلغاء</button>
+    </div>
+  </div>
+
+
+  <!-- Lock screen -->
+  <div id="lock-screen">
+    <img class="logo" src="icon-192.png" alt="" onerror="this.style.display='none'">
+    <h3>التطبيق مقفل</h3>
+    <p>أدخل رمز القفل (4 أرقام)</p>
+    <input type="password" id="lock-input" class="pin-in" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="••••">
+    <button type="button" class="lock-forgot" onclick="forgotLock()">نسيت الرمز؟</button>
+  </div>
+
+</div>
+
+<script>
+/* ============ Constants ============ */
+const PREFIX_FRIEND   = '*370*1*1*';
+const PREFIX_MERCHANT = '*370*2*';
+/* Jawwal Pay:  *110*1*<PIN>*<phone>*<amount>*1#  (pay to friend) */
+const JAWAL_FRIEND_PREFIX   = '*110*1*';
+const JAWAL_FRIEND_SUFFIX   = '*1#';
+/* دفع لتاجر في جوال باي:  *110*2*<PIN>*<رقم التاجر>*<المبلغ>*1#  (مصدر مجتمعي، جرّبه بمبلغ صغير أولاً) */
+const JAWAL_MERCHANT_TEMPLATE = '*110*2*{PIN}*{PHONE}*{AMOUNT}*1#';
+const PIN_KEY = 'ussd_jawwal_pin';
+const HIST_KEY = 'ussd_history';
+const LOCK_KEY = 'ussd_lock';
+const HIST_MAX = 100;
+const STORAGE_KEY     = 'palpay_favorites';
+const DAY_KEY = 'ussd_day';
+const LOCKTRY_KEY = 'ussd_lock_try';
+const KIND_KEYS = ['friend', 'merchant', 'jw-friend', 'jw-merchant'];
+const PHONE_RE = /^05\d{8}$/;
+const AMOUNT_RE = /^\d{1,7}(\.\d{1,2})?$/;
+
+/* ---- تنظيف أي بيانات مخزّنة/مستوردة قبل استخدامها ---- */
+function sanitizeFavs(a) {
+  const out = [];
+  if (!Array.isArray(a)) return out;
+  a.forEach(x => {
+    if (!x || typeof x.phone !== 'string' || !PHONE_RE.test(x.phone) || out.some(f => f.phone === x.phone)) return;
+    const e = { name: (typeof x.name === 'string' ? x.name.trim().slice(0, 40) : '') || 'بدون اسم', phone: x.phone };
+    if (x.w === 'palpay' || x.w === 'jawwal') e.w = x.w;
+    out.push(e);
+  });
+  return out;
+}
+function sanitizeHist(a) {
+  const out = [];
+  if (!Array.isArray(a)) return out;
+  a.forEach(x => {
+    if (!x || KIND_KEYS.indexOf(x.k) < 0 || typeof x.p !== 'string' || !PHONE_RE.test(x.p)) return;
+    const amt = Number(x.a), t = Number(x.t);
+    if (!isFinite(amt) || amt <= 0 || amt >= 1e9 || !isFinite(t) || t <= 0) return;
+    const e = { k: x.k, p: x.p, a: String(amt), t: t };
+    if (x.n != null && String(x.n).trim()) e.n = String(x.n).slice(0, 40);
+    out.push(e);
+  });
+  return out;
+}
+function sanitizeSettings(o, base) {
+  const s = Object.assign({}, base);
+  if (!o || typeof o !== 'object' || Array.isArray(o)) return s;
+  if (o.provider === 'palpay' || o.provider === 'jawwal') s.provider = o.provider;
+  if (['auto', 'dark', 'light'].indexOf(o.theme) >= 0) s.theme = o.theme;
+  ['haptic', 'hidePin', 'keepHistory'].forEach(k => { if (typeof o[k] === 'boolean') s[k] = o[k]; });
+  ['bigLimit', 'dayLimit'].forEach(k => { const n = Number(o[k]); if (isFinite(n) && n >= 0 && n < 1e9) s[k] = n; });
+  if (Array.isArray(o.chips)) {
+    const c = o.chips.map(Number).filter(n => isFinite(n) && n > 0 && n < 1e7);
+    const u = c.filter((n, i) => c.indexOf(n) === i).slice(0, 6);
+    if (u.length) s.chips = u;
+  }
+  if (o.svc && typeof o.svc === 'object') {
+    const sv = {};
+    ['balpp', 'baljp', 'pp', 'jp'].forEach(k => {
+      const v = Object.prototype.hasOwnProperty.call(o.svc, k) ? o.svc[k] : undefined;
+      if (typeof v === 'string' && (v === '' || /^\*[\d*]{0,20}#$/.test(v))) sv[k] = v;
+    });
+    s.svc = sv;
+  }
+  return s;
+}
+function cleanAmount(v) {
+  let s = normalizeDigits(String(v)).replace(/[٫,،]/g, '.').replace(/[^\d.]/g, '');
+  const i = s.indexOf('.');
+  if (i >= 0) s = s.slice(0, i + 1) + s.slice(i + 1).replace(/\./g, '');
+  const parts = s.split('.');
+  parts[0] = parts[0].slice(0, 7);
+  if (parts.length > 1) parts[1] = parts[1].slice(0, 2);
+  return parts.join('.');
+}
+
+/* ============ State ============ */
+let lastCode = '';
+let calcExpression = '';
+let calcJustEvaluated = false;
+let favorites = [];
+let selectedFavPhone = null;
+
+try {
+  favorites = sanitizeFavs(JSON.parse(localStorage.getItem(STORAGE_KEY)));
+} catch (e) { favorites = []; }
+
+/* ============ DOM refs ============ */
+const phoneInput       = document.getElementById('phone');
+const phoneWrapper     = document.getElementById('phone-wrapper');
+const quickClear       = document.getElementById('quick-clear');
+const checkIcon        = document.getElementById('check-icon');
+const errorMsg         = document.getElementById('error-msg');
+const favStarBtn       = document.getElementById('fav-star-btn');
+const quickFavContainer= document.getElementById('quick-fav-container');
+const topCopyBtn       = document.getElementById('top-copy-btn');
+const amountInput      = document.getElementById('amount');
+
+/* ============ Helpers ============ */
+function persistFavorites() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites)); } catch (e) {}
+}
+
+function normalizeDigits(str) {
+  return String(str)
+    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+}
+
+function resetCode() {
+  lastCode = '';
+  topCopyBtn.classList.remove('show');
+}
+
+function updateCodePreview() {
+  if (!lastCode) return;
+  let shown = lastCode;
+  if (window._maskPin && settings.hidePin) shown = shown.replace('*' + window._maskPin + '*', '*••••*');
+  document.getElementById('code-text').textContent = shown;
+  topCopyBtn.classList.add('show');
+}
+
+/* ============ Phone input ============ */
+phoneInput.addEventListener('input', function () {
+  let v = normalizeDigits(this.value).replace(/\D/g, '');
+  if (v.startsWith('00972')) v = '0' + v.slice(5);
+  else if (v.startsWith('972')) v = '0' + v.slice(3);
+  this.value = v.slice(0, 10);
+  resetCode();
+  phoneWrapper.classList.remove('err', 'suc');
+  errorMsg.classList.remove('show');
+  checkIcon.classList.remove('show');
+  quickClear.classList.toggle('show', this.value.length > 0);
+  updateStarState();
+
+  if (this.value.length === 10) {
+    if (/^05\d{8}$/.test(this.value)) {
+      phoneWrapper.classList.add('suc');
+      checkIcon.classList.add('show');
+    } else {
+      phoneWrapper.classList.add('err');
+      errorMsg.classList.add('show');
+    }
+  }
+});
+
+amountInput.addEventListener('input', function () {
+  const c = cleanAmount(this.value);
+  if (c !== this.value) this.value = c;
+  resetCode();
+});
+
+function quickClearPhone() {
+  phoneInput.value = '';
+  quickClear.classList.remove('show');
+  phoneWrapper.classList.remove('err', 'suc');
+  checkIcon.classList.remove('show');
+  errorMsg.classList.remove('show');
+  updateStarState();
+  resetCode();
+  phoneInput.focus();
+}
+
+/* ============ Favorites state ============ */
+function updateStarState() {
+  const exists = favorites.some(f => f.phone === phoneInput.value.trim());
+  favStarBtn.classList.toggle('act', exists);
+  favStarBtn.innerHTML = ico(exists ? 'star' : 'star-o');
+}
+
+/* ============ Quick favorites rendering ============ */
+function renderQuickFavorites() {
+  renderRecent();
+  quickFavContainer.innerHTML = '';
+  if (favorites.length === 0) {
+    quickFavContainer.classList.remove('show');
+    return;
+  }
+  quickFavContainer.classList.add('show');
+
+  favorites.forEach(fav => {
+    const initial = fav.name && fav.name !== 'بدون اسم' ? fav.name.charAt(0) : '؟';
+    const div = document.createElement('div');
+    div.className = 'q-fav-circ';
+
+    const initDiv = document.createElement('div');
+    initDiv.className = 'f-init';
+    initDiv.textContent = initial;
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'f-sname';
+    nameDiv.textContent = fav.name || 'بدون اسم';
+
+    div.append(initDiv, nameDiv);
+
+    let pressTimer = null;
+    const startPress  = () => { clearTimeout(pressTimer); pressTimer = setTimeout(() => openOptModal(fav.phone), 600); };
+    const cancelPress = () => clearTimeout(pressTimer);
+
+    div.addEventListener('touchstart', startPress, { passive: true });
+    div.addEventListener('touchend', cancelPress);
+    div.addEventListener('touchmove', cancelPress);
+    div.addEventListener('mousedown', startPress);
+    div.addEventListener('mouseup', cancelPress);
+    div.addEventListener('mouseleave', cancelPress);
+    div.addEventListener('contextmenu', e => e.preventDefault());
+
+    div.onclick = function () {
+      if (selectedFavPhone) return;
+      phoneInput.value = fav.phone;
+      phoneInput.dispatchEvent(new Event('input'));
+      if (fav.w) setProvider(fav.w);
+    };
+    quickFavContainer.appendChild(div);
+  });
+}
+
+/* ============ Long-press options ============ */
+function openOptModal(phone) {
+  selectedFavPhone = phone;
+  document.getElementById('opt-modal').classList.add('show');
+}
+function closeOptModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  selectedFavPhone = null;
+  document.getElementById('opt-modal').classList.remove('show');
+}
+
+function editFavName() {
+  const fav = favorites.find(f => f.phone === selectedFavPhone);
+  if (!fav) return;
+  const newName = prompt('أدخل الاسم الجديد:', fav.name);
+  if (newName !== null && newName.trim() !== '') {
+    fav.name = newName.trim().slice(0, 40);
+    persistFavorites();
+    closeOptModal();
+    renderQuickFavorites();
+    renderFavorites();
+    updateStarState();
+  }
+}
+
+/* ============ In-app delete confirmation ============ */
+function askConfirm(title, html, onYes) {
+  document.getElementById('cf-title').textContent = title;
+  document.getElementById('cf-text').innerHTML = html;
+  document.getElementById('cf-yes').onclick = () => { closeConfirm(); onYes(); };
+  document.getElementById('confirm-modal').classList.add('show');
+  vibrate(10);
+}
+function closeConfirm(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('confirm-modal').classList.remove('show');
+  document.getElementById('cf-yes').onclick = null;
+}
+function escHtml(t) {
+  return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function askDeleteFav(phone) {
+  const fav = favorites.find(f => f.phone === phone);
+  if (!fav) return;
+  const label = fav.name && fav.name !== 'بدون اسم' ? '<b>' + escHtml(fav.name) + '</b><br>' : '';
+  askConfirm('حذف من المفضلة', 'هل أنت متأكد من حذف ' + label + '<span dir="ltr" style="unicode-bidi:isolate"><b>' + escHtml(phone) + '</b></span> من المفضلة؟', () => deleteFavorite(phone));
+}
+
+function confirmDeleteFav() {
+  const phone = selectedFavPhone;
+  closeOptModal();
+  askDeleteFav(phone);
+}
+
+/* ============ Add / remove favorite ============ */
+function toggleFavorite() {
+  const phone = phoneInput.value.trim();
+  if (!/^05\d{8}$/.test(phone)) {
+    alert('أدخل رقم صحيح أولاً');
+    return;
+  }
+  const exists = favorites.find(f => f.phone === phone);
+  if (exists) {
+    askDeleteFav(phone);
+  } else {
+    document.getElementById('user-name-input').value = '';
+    document.getElementById('name-modal').classList.add('show');
+    setTimeout(() => document.getElementById('user-name-input').focus(), 300);
+  }
+}
+
+function closeNameModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('name-modal').classList.remove('show');
+}
+
+async function pickContact() {
+  if ('contacts' in navigator && 'select' in navigator.contacts) {
+    try {
+      const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+      if (contacts.length === 0) return;
+      const contact = contacts[0];
+
+      if (contact.name && contact.name.length > 0) {
+        document.getElementById('user-name-input').value = String(contact.name[0]).slice(0, 40);
+      }
+      if (contact.tel && contact.tel.length > 0) {
+        let rawNumber = normalizeDigits(contact.tel[0]).replace(/\D/g, '');
+        if (rawNumber.startsWith('00972')) rawNumber = '0' + rawNumber.slice(5);
+        else if (rawNumber.startsWith('972')) rawNumber = '0' + rawNumber.slice(3);
+        else if (rawNumber.length === 9 && rawNumber.startsWith('5')) rawNumber = '0' + rawNumber;
+
+        if (/^05\d{8}$/.test(rawNumber)) {
+          phoneInput.value = rawNumber;
+          phoneInput.dispatchEvent(new Event('input'));
+        } else {
+          alert('رقم جهة الاتصال غير صالح، يجب أن يبدأ بـ 05');
+        }
+      }
+    } catch (err) { console.log(err); }
+  } else {
+    alert('متصفحك لا يدعم جلب جهات الاتصال مباشرة. يرجى كتابة الاسم يدوياً.');
+  }
+}
+
+function saveToFavorites() {
+  const phone = phoneInput.value.trim();
+  if (!/^05\d{8}$/.test(phone)) { alert('رقم الجوال غير صالح'); return; }
+
+  let name = document.getElementById('user-name-input').value.trim();
+  if (!name) name = 'بدون اسم';
+
+  const ex = favorites.find(f => f.phone === phone);
+  if (ex) {
+    ex.w = settings.provider; persistFavorites();
+    closeNameModal();
+    updateStarState();
+    return;
+  }
+  favorites.push({ name, phone, w: settings.provider });
+  persistFavorites();
+  closeNameModal();
+  updateStarState();
+  renderQuickFavorites();
+  if (document.getElementById('fav-modal').classList.contains('show')) renderFavorites();
+}
+
+/* ============ Favorites list modal ============ */
+function openFavorites() {
+  renderFavorites();
+  document.getElementById('fav-modal').classList.add('show');
+}
+function closeFavModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('fav-modal').classList.remove('show');
+}
+
+function renderFavorites() {
+  const list = document.getElementById('fav-list');
+  list.innerHTML = '';
+
+  if (favorites.length === 0) {
+    const li = document.createElement('li');
+    li.className = 'f-empty';
+    li.innerHTML = 'لا توجد أرقام محفوظة.<br>اضغط على النجمة (★) لحفظ الرقم.';
+    list.appendChild(li);
+    return;
+  }
+
+  favorites.forEach(fav => {
+    const li = document.createElement('li');
+    li.className = 'f-item';
+
+    const info = document.createElement('div');
+    info.className = 'f-info';
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'f-name';
+    nameSpan.textContent = fav.name;
+    const numSpan = document.createElement('span');
+    numSpan.className = 'f-num';
+    numSpan.textContent = fav.phone + (fav.w ? '  ·  ' + (fav.w === 'jawwal' ? 'Jawwal Pay' : 'PalPay') : '');
+    info.append(nameSpan, numSpan);
+
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'f-del';
+    delBtn.setAttribute('aria-label', 'حذف');
+    delBtn.innerHTML = ico('trash');
+    delBtn.addEventListener('click', e => { e.stopPropagation(); askDeleteFav(fav.phone); });
+
+    li.append(info, delBtn);
+    li.addEventListener('click', e => {
+      if (e.target.closest('.f-del')) return;
+      phoneInput.value = fav.phone;
+      phoneInput.dispatchEvent(new Event('input'));
+      if (fav.w) setProvider(fav.w);
+      closeFavModal();
+      phoneInput.focus();
+    });
+    list.appendChild(li);
+  });
+}
+
+function deleteFavorite(phone) {
+  favorites = favorites.filter(f => f.phone !== phone);
+  persistFavorites();
+  renderFavorites();
+  renderQuickFavorites();
+  updateStarState();
+  toast('تم الحذف من المفضلة');
+}
+
+/* ============ Validation ============ */
+function validateInputs() {
+  const p = phoneInput.value.trim();
+  const rawAmount = amountInput.value.trim();
+
+  if (!p) { alert('أدخل رقم الجوال'); return null; }
+  if (!/^05\d{8}$/.test(p)) { alert('رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام'); return null; }
+  if (!rawAmount) { alert('أدخل مبلغ صحيح'); return null; }
+
+  const cleaned = cleanAmount(rawAmount);
+  if (!AMOUNT_RE.test(cleaned)) { alert('أدخل مبلغ صحيح (حتى 7 خانات وخانتين عشريتين)'); return null; }
+  const amountNumber = Number(cleaned);
+  if (!isFinite(amountNumber) || amountNumber <= 0) { alert('أدخل مبلغ صحيح'); return null; }
+
+  return { p, a: String(amountNumber) };
+}
+
+/* ============ Payment actions ============ */
+function openFriendPayment() {
+  if (settings.provider === 'jawwal') return openJawalB('friend');
+  const data = validateInputs();
+  if (!data) return;
+  const code = PREFIX_FRIEND + data.p + '*' + data.a + '#';
+  showPaymentModal('دفع لصديق', code, 'دفع لصديق', 'user', '', { kind: 'friend', phone: data.p, amount: data.a });
+}
+
+function openMerchantPayment() {
+  if (settings.provider === 'jawwal') return openJawalB('merchant');
+  const data = validateInputs();
+  if (!data) return;
+  const code = PREFIX_MERCHANT + data.p + '*' + data.a + '#';
+  showPaymentModal('دفع لتاجر', code, 'دفع لتاجر', 'store', '', { kind: 'merchant', phone: data.p, amount: data.a });
+}
+
+/* ============ Jawwal Pay (type + PIN) ============ */
+let jpType = 'friend';
+let jpData = null;
+
+const PIN_CIPHER_KEY = 'ussd_jawwal_pin_enc';
+const PIN_DB_NAME = 'ussd-secure-store';
+const PIN_DB_STORE = 'keys';
+const PIN_CRYPTO_KEY_ID = 'jawwal-pin-aes-gcm';
+let pinDbPromise = null;
+let pinCryptoKeyPromise = null;
+function openPinCryptoDB() {
+  if (pinDbPromise) return pinDbPromise;
+  pinDbPromise = new Promise((resolve, reject) => {
+    if (!window.indexedDB) return reject(new Error('IndexedDB غير متاح'));
+    const req = indexedDB.open(PIN_DB_NAME, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(PIN_DB_STORE)) db.createObjectStore(PIN_DB_STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error || new Error('تعذر فتح مخزن الأمان'));
+  });
+  return pinDbPromise;
+}
+async function getPinCryptoKey() {
+  if (pinCryptoKeyPromise) return pinCryptoKeyPromise;
+  pinCryptoKeyPromise = (async () => {
+    if (!window.isSecureContext || !window.crypto || !crypto.subtle || !window.crypto.getRandomValues) {
+      throw new Error('التشفير الآمن غير متاح في هذا السياق');
+    }
+    const db = await openPinCryptoDB();
+    let key = await new Promise((resolve, reject) => {
+      const tx = db.transaction(PIN_DB_STORE, 'readonly');
+      const req = tx.objectStore(PIN_DB_STORE).get(PIN_CRYPTO_KEY_ID);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error || new Error('تعذر قراءة مفتاح التشفير'));
+    });
+    if (!key) {
+      key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(PIN_DB_STORE, 'readwrite');
+        tx.objectStore(PIN_DB_STORE).put(key, PIN_CRYPTO_KEY_ID);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error || new Error('تعذر حفظ مفتاح التشفير'));
+        tx.onabort = () => reject(tx.error || new Error('تم إلغاء حفظ مفتاح التشفير'));
+      });
+    }
+    return key;
+  })();
+  try { return await pinCryptoKeyPromise; }
+  catch (e) { pinCryptoKeyPromise = null; throw e; }
+}
+function bytesToBase64(bytes) {
+  let binary = '';
+  new Uint8Array(bytes).forEach(b => { binary += String.fromCharCode(b); });
+  return btoa(binary);
+}
+function base64ToBytes(value) {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+async function encryptSavedPin(pin) {
+  const key = await getPinCryptoKey();
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const data = new TextEncoder().encode(pin);
+  const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
+  return { v: 1, iv: bytesToBase64(iv), data: bytesToBase64(cipher) };
+}
+async function decryptSavedPin(payload) {
+  if (!payload || payload.v !== 1 || typeof payload.iv !== 'string' || typeof payload.data !== 'string') return '';
+  const key = await getPinCryptoKey();
+  const clear = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: base64ToBytes(payload.iv) }, key, base64ToBytes(payload.data));
+  const pin = new TextDecoder().decode(clear);
+  return /^\d{4}$/.test(pin) ? pin : '';
+}
+async function setSavedPin(pin) {
+  if (!/^\d{4}$/.test(pin || '')) throw new Error('رمز PIN غير صالح');
+  const payload = await encryptSavedPin(pin);
+  localStorage.setItem(PIN_CIPHER_KEY, JSON.stringify(payload));
+  try { localStorage.removeItem(PIN_KEY); } catch (e) {}
+}
+async function getSavedPin() {
+  try {
+    const encrypted = localStorage.getItem(PIN_CIPHER_KEY);
+    if (encrypted) {
+      const pin = await decryptSavedPin(JSON.parse(encrypted));
+      if (pin) return pin;
+      localStorage.removeItem(PIN_CIPHER_KEY);
+    }
+  } catch (e) {
+    try { localStorage.removeItem(PIN_CIPHER_KEY); } catch (ignored) {}
+  }
+  // Migrate older plaintext value once, then remove the legacy key.
+  let legacy = '';
+  try { legacy = localStorage.getItem(PIN_KEY) || ''; } catch (e) {}
+  if (/^\d{4}$/.test(legacy)) {
+    try { await setSavedPin(legacy); return legacy; }
+    catch (e) {
+      try { localStorage.removeItem(PIN_KEY); } catch (ignored) {}
+      toast('تعذّر نقل الرمز القديم إلى تخزين مشفّر؛ أدخله مجددًا عند الحاجة.');
+    }
+  } else if (legacy) {
+    try { localStorage.removeItem(PIN_KEY); } catch (e) {}
+  }
+  return '';
+}
+function removeSavedPin() {
+  try { localStorage.removeItem(PIN_KEY); localStorage.removeItem(PIN_CIPHER_KEY); } catch (e) {}
+}
+function cleanPin(v) { return normalizeDigits(v).replace(/\D/g, '').slice(0, 4); }
+
+async function openJawalB(type) {
+  const data = validateInputs();
+  if (!data) return;
+  jpData = data;
+  setJpType(type || 'friend');
+  const saved = await getSavedPin();
+  if (saved) { await continueJawwalPay(saved); return; }
+  document.getElementById('jp-pin-box').style.display = 'block';
+  document.getElementById('jp-saved-box').style.display = 'none';
+  const pinEl = document.getElementById('jp-pin');
+  pinEl.value = ''; pinEl.classList.remove('err');
+  document.getElementById('jp-save').checked = false;
+  document.getElementById('jp-modal').classList.add('show');
+  setTimeout(() => pinEl.focus(), 300);
+}
+async function migrateLegacySavedPin() {
+  let legacy = '';
+  try { legacy = localStorage.getItem(PIN_KEY) || ''; } catch (e) {}
+  if (!/^\d{4}$/.test(legacy)) {
+    if (legacy) { try { localStorage.removeItem(PIN_KEY); } catch (e) {} }
+    return;
+  }
+  try { await setSavedPin(legacy); }
+  catch (e) {
+    try { localStorage.removeItem(PIN_KEY); } catch (ignored) {}
+    toast('لم يتوفر التشفير الآمن؛ سيُطلب إدخال رمز جوال باي مجددًا.');
+  }
+}
+function closeJpModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('jp-modal').classList.remove('show');
+  document.getElementById('jp-pin').value = '';
+}
+function setJpType(t) {
+  jpType = t === 'merchant' ? 'merchant' : 'friend';
+  document.getElementById('jp-title').textContent = jpType === 'merchant' ? 'Jawwal Pay — دفع لتاجر' : 'Jawwal Pay — دفع لصديق';
+}
+document.getElementById('jp-pin').addEventListener('input', function () {
+  this.value = cleanPin(this.value);
+  this.classList.remove('err');
+});
+
+function buildJawwalCode(type, pin, phone, amount) {
+  if (type === 'merchant') {
+    if (!JAWAL_MERCHANT_TEMPLATE) return null;
+    return JAWAL_MERCHANT_TEMPLATE.replace('{PIN}', pin).replace('{PHONE}', phone).replace('{AMOUNT}', amount);
+  }
+  return JAWAL_FRIEND_PREFIX + pin + '*' + phone + '*' + amount + JAWAL_FRIEND_SUFFIX;
+}
+
+async function continueJawwalPay(savedPin) {
+  if (!jpData) return;
+  let pin = typeof savedPin === 'string' ? savedPin : await getSavedPin();
+  if (!pin) {
+    const pinEl = document.getElementById('jp-pin');
+    pin = cleanPin(pinEl.value);
+    if (pin.length !== 4) {
+      pinEl.classList.add('err'); shake(pinEl); vibrate(20);
+      toast('أدخل الرمز السري المكوّن من 4 أرقام');
+      return;
+    }
+    if (document.getElementById('jp-save').checked) {
+      try {
+        await setSavedPin(pin);
+        syncPinUI();
+        toast('تم حفظ الرمز بتخزين مشفّر');
+      } catch (e) {
+        toast('تعذّر حفظ الرمز بأمان؛ سيُستخدم لهذه العملية فقط.');
+      }
+    }
+  }
+  const code = buildJawwalCode(jpType, pin, jpData.p, jpData.a);
+  if (!code) { toast('كود دفع التاجر لجوال باي غير مضبوط بعد'); return; }
+  document.getElementById('jp-modal').classList.remove('show');
+  document.getElementById('jp-pin').value = '';
+  const title = jpType === 'merchant' ? 'Jawwal Pay — دفع لتاجر' : 'Jawwal Pay — دفع لصديق';
+  showPaymentModal(title, code, title, jpType === 'merchant' ? 'store' : 'user', pin, { kind: jpType === 'merchant' ? 'jw-merchant' : 'jw-friend', phone: jpData.p, amount: jpData.a });
+}
+
+
+/* ============ History ============ */
+const KIND_LABELS = { 'friend': 'دفع لصديق', 'merchant': 'دفع لتاجر', 'jw-friend': 'جوال باي — دفع لصديق', 'jw-merchant': 'جوال باي — دفع لتاجر' };
+let historyList = [];
+try { historyList = sanitizeHist(JSON.parse(localStorage.getItem(HIST_KEY))); } catch (e) { historyList = []; }
+function persistHistory() { try { localStorage.setItem(HIST_KEY, JSON.stringify(historyList)); } catch (e) {} }
+function dayStamp(d) { d = d || new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+function tallyToday() {
+  try { const o = JSON.parse(localStorage.getItem(DAY_KEY)); if (o && o.d === dayStamp() && isFinite(o.t)) return Number(o.t); } catch (e) {}
+  return 0;
+}
+function addDayTotal(a) {
+  const n = Number(a); if (!isFinite(n) || n <= 0) return;
+  try { localStorage.setItem(DAY_KEY, JSON.stringify({ d: dayStamp(), t: +(tallyToday() + n).toFixed(2) })); } catch (e) {}
+}
+function addHistory(meta) {
+  if (!meta) return;
+  addDayTotal(meta.amount);
+  if (!settings.keepHistory) return;
+  const noteEl = document.getElementById('note'), n = noteEl.value.trim();
+  const entry = { k: meta.kind, p: meta.phone, a: meta.amount, t: Date.now() };
+  if (n) entry.n = n;
+  noteEl.value = '';
+  historyList.unshift(entry);
+  historyList = historyList.slice(0, HIST_MAX);
+  persistHistory();
+  renderRecent();
+}
+const DAY_NAMES = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+function dayLabel(ts) {
+  const d = new Date(ts), now = new Date(), z = n => String(n).padStart(2, '0');
+  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(now) - day(d)) / 86400000);
+  if (diff === 0) return 'اليوم';
+  if (diff === 1) return 'أمس';
+  return DAY_NAMES[d.getDay()] + ' ' + d.getFullYear() + '/' + z(d.getMonth() + 1) + '/' + z(d.getDate());
+}
+function timeLabel(ts) { const d = new Date(ts), z = n => String(n).padStart(2, '0'); return z(d.getHours()) + ':' + z(d.getMinutes()); }
+function fmtDate(ts) { return dayLabel(ts) + '  ' + timeLabel(ts); }
+function openHistory() { renderHistory(); document.getElementById('hist-modal').classList.add('show'); }
+function closeHistModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('hist-modal').classList.remove('show');
+}
+function renderHistory() {
+  const list = document.getElementById('hist-list');
+  list.innerHTML = '';
+  document.getElementById('hist-clear').style.display = historyList.length ? 'flex' : 'none';
+  if (!historyList.length) document.getElementById('hist-total').style.display = 'none';
+  if (!historyList.length) {
+    const li = document.createElement('li');
+    li.className = 'f-empty';
+    li.textContent = settings.keepHistory ? 'لا توجد عمليات بعد.' : 'حفظ السجل متوقف. فعّله من الإعدادات.';
+    list.appendChild(li);
+    return;
+  }
+  renderTotals();
+  let shown = 0;
+  historyList.forEach((h, i) => {
+    if (!histMatch(h)) return;
+    shown++;
+    const li = document.createElement('li');
+    li.className = 'f-item h-item';
+    const info = document.createElement('div');
+    info.className = 'f-info';
+    const fav = favorites.find(f => f.phone === h.p);
+    const top = document.createElement('span');
+    top.className = 'f-name';
+    top.textContent = (KIND_LABELS[h.k] || 'تحويل') + (fav && fav.name !== 'بدون اسم' ? ' · ' + fav.name : '');
+    const mid = document.createElement('span');
+    mid.className = 'f-num';
+    mid.textContent = h.p + '  |  ' + h.a + ' ₪';
+    const meta = document.createElement('span');
+    meta.className = 'h-meta';
+    meta.textContent = fmtDate(h.t);
+    info.append(top, mid);
+    if (h.n) { const nt = document.createElement('span'); nt.className = 'f-num'; nt.textContent = '📝 ' + h.n; info.append(nt); }
+    info.append(meta);
+    const del = document.createElement('button');
+    del.type = 'button'; del.className = 'f-del'; del.setAttribute('aria-label', 'حذف');
+    del.innerHTML = ico('trash');
+    del.addEventListener('click', e => { e.stopPropagation(); historyList.splice(i, 1); persistHistory(); renderHistory(); renderRecent(); });
+    li.append(info, del);
+    li.addEventListener('click', () => replayHistory(i));
+    list.appendChild(li);
+  });
+  if (!shown) { const li = document.createElement('li'); li.className = 'f-empty'; li.textContent = 'لا توجد نتائج مطابقة.'; list.appendChild(li); }
+}
+function histMatch(h) {
+  const q = normalizeDigits(document.getElementById('hist-q').value.trim()).toLowerCase();
+  const kind = document.getElementById('hist-kind').value, when = document.getElementById('hist-when').value;
+  if (kind && (kind === 'jw' ? h.k.indexOf('jw') !== 0 : h.k !== kind)) return false;
+  if (when) {
+    const now = new Date(), d = new Date(h.t), day0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    if (when === 'today' && h.t < day0) return false;
+    if (when === 'week' && h.t < new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6).getTime()) return false;
+    if (when === 'month' && (d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear())) return false;
+  }
+  if (q) {
+    const fav = favorites.find(f => f.phone === h.p);
+    if (h.p.indexOf(q) < 0 && (h.n || '').toLowerCase().indexOf(q) < 0 && !(fav && fav.name.toLowerCase().indexOf(q) >= 0)) return false;
+  }
+  return true;
+}
+function renderTotals() {
+  const now = new Date(), day0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  let t = 0, m = 0;
+  historyList.forEach(h => {
+    const a = Number(h.a) || 0, d = new Date(h.t);
+    if (h.t >= day0) t += a;
+    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) m += a;
+  });
+  const el = document.getElementById('hist-total');
+  el.style.display = historyList.length ? 'block' : 'none';
+  el.textContent = 'اليوم: ' + +t.toFixed(2) + ' ₪  ·  هذا الشهر: ' + +m.toFixed(2) + ' ₪';
+}
+function replayHistory(i) {
+  const h = historyList[i];
+  if (!h) return;
+  phoneInput.value = h.p; phoneInput.dispatchEvent(new Event('input'));
+  amountInput.value = h.a; amountInput.dispatchEvent(new Event('input'));
+  document.getElementById('note').value = h.n || '';
+  closeHistModal();
+  setProvider(h.k.indexOf('jw') === 0 ? 'jawwal' : 'palpay');
+  if (h.k === 'friend') openFriendPayment();
+  else if (h.k === 'merchant') openMerchantPayment();
+  else if (h.k === 'jw-friend' || h.k === 'jw-merchant') openJawalB(h.k === 'jw-merchant' ? 'merchant' : 'friend');
+}
+function clearHistory() {
+  askConfirm('مسح السجل', 'هل تريد حذف كل العمليات المسجّلة (' + historyList.length + ')؟', () => {
+    historyList = []; persistHistory(); renderHistory(); renderRecent(); toast('تم مسح السجل');
+  });
+}
+
+
+/* ============ Recent numbers (from history) ============ */
+function fmtShort(ts) {
+  const l = dayLabel(ts);
+  return (l === 'اليوم' || l === 'أمس') ? l + ' ' + timeLabel(ts) : l;
+}
+function renderRecent() {
+  const box = document.getElementById('recent-box');
+  const list = document.getElementById('recent-list');
+  list.innerHTML = '';
+  const seen = [];
+  historyList.forEach(h => { if (h.p && !seen.some(x => x.p === h.p)) seen.push(h); });
+  const recent = seen.slice(0, 6);
+  box.classList.toggle('show', recent.length > 0);
+  recent.forEach(h => {
+    const fav = favorites.find(f => f.phone === h.p);
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'rc-chip';
+    if (fav && fav.name && fav.name !== 'بدون اسم') {
+      const n = document.createElement('span'); n.className = 'rc-name'; n.textContent = fav.name; b.appendChild(n);
+    }
+    const num = document.createElement('span'); num.className = 'rc-num'; num.textContent = h.p; b.appendChild(num);
+    const meta = document.createElement('span'); meta.className = 'rc-meta';
+    meta.textContent = h.a + ' ₪ · ' + fmtShort(h.t);
+    b.appendChild(meta);
+    b.addEventListener('click', () => {
+      phoneInput.value = h.p;
+      phoneInput.dispatchEvent(new Event('input'));
+      amountInput.value = h.a;
+      amountInput.dispatchEvent(new Event('input'));
+      vibrate(10);
+    });
+    list.appendChild(b);
+  });
+}
+
+/* ============ App lock (optional) ============ */
+let lockData = null;
+try { const l = JSON.parse(localStorage.getItem(LOCK_KEY)); if (l && l.h && l.s) lockData = l; } catch (e) {}
+function lockEnabled() { return !!lockData; }
+const canSubtle = () => !!(window.crypto && crypto.subtle && window.TextEncoder);
+function randSalt() {
+  const a = new Uint8Array(12);
+  if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(a); else for (let i = 0; i < a.length; i++) a[i] = Math.floor(Math.random() * 256);
+  return Array.from(a).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+function toHex(buf) { return Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2, '0')).join(''); }
+async function hashLock(code, salt, mode) {
+  const t = salt + ':' + code;
+  if (mode === 'p' && canSubtle()) {
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(code), 'PBKDF2', false, ['deriveBits']);
+    return toHex(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: new TextEncoder().encode(salt), iterations: 150000 }, key, 256));
+  }
+  if (mode === 's' && canSubtle()) {
+    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+    return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('');
+  }
+  let h = 5381;
+  for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) >>> 0;
+  return 'f' + h.toString(16);
+}
+async function verifyLock(code) { return (await hashLock(code, lockData.s, lockData.m)) === lockData.h; }
+
+const lockInput = document.getElementById('lock-input');
+let lockFails = 0, lockUntil = 0, lockRounds = 0, hiddenAt = 0;
+try { const o = JSON.parse(localStorage.getItem(LOCKTRY_KEY)); if (o) { lockFails = Math.max(0, o.n | 0); lockUntil = Number(o.u) || 0; lockRounds = Math.min(6, Math.max(0, o.r | 0)); } } catch (e) {}
+function saveTry() {
+  try {
+    if (lockFails || lockRounds || lockUntil > Date.now()) localStorage.setItem(LOCKTRY_KEY, JSON.stringify({ n: lockFails, u: lockUntil, r: lockRounds }));
+    else localStorage.removeItem(LOCKTRY_KEY);
+  } catch (e) {}
+}
+function setInert(on) {
+  document.querySelectorAll('.app > *').forEach(el => {
+    if (el.id === 'lock-screen' || el.classList.contains('toast')) return;
+    if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert');
+  });
+}
+function showLock() {
+  if (!lockEnabled()) return;
+  document.querySelectorAll('.mod.show').forEach(m => m.classList.remove('show'));
+  document.getElementById('jp-pin').value = '';
+  lastCode = ''; jpData = null; window._maskPin = '';
+  topCopyBtn.classList.remove('show');
+  document.getElementById('code-text').textContent = '';
+  document.getElementById('btn-pay-link').removeAttribute('href');
+  setInert(true);
+  document.documentElement.classList.add('locked');
+  lockInput.value = '';
+  setTimeout(() => lockInput.focus(), 200);
+}
+function unlockApp() { document.documentElement.classList.remove('locked'); setInert(false); lockInput.value = ''; lockFails = 0; lockRounds = 0; lockUntil = 0; saveTry(); }
+lockInput.addEventListener('input', async function () {
+  this.value = cleanPin(this.value);
+  this.classList.remove('err');
+  if (this.value.length !== 4) return;
+  if (Date.now() < lockUntil) { this.value = ''; toast('حاول بعد ' + Math.ceil((lockUntil - Date.now()) / 1000) + ' ثانية'); return; }
+  const entered = this.value;
+  if (await verifyLock(entered)) {
+    if (lockData.m !== 'p' && canSubtle()) {
+      try {
+        const salt = randSalt();
+        lockData = { s: salt, m: 'p', h: await hashLock(entered, salt, 'p') };
+        localStorage.setItem(LOCK_KEY, JSON.stringify(lockData));
+      } catch (e) {}
+    }
+    unlockApp(); return;
+  }
+  this.value = ''; this.classList.add('err'); shake(this); vibrate(30);
+  lockFails++;
+  if (lockFails >= 5) {
+    lockFails = 0;
+    const wait = Math.min(900, 30 * Math.pow(2, lockRounds));
+    lockRounds = Math.min(6, lockRounds + 1);
+    lockUntil = Date.now() + wait * 1000;
+    toast('محاولات كثيرة، انتظر ' + (wait >= 60 ? Math.round(wait / 60) + ' دقيقة' : wait + ' ثانية'));
+  } else toast('الرمز غير صحيح');
+  saveTry();
+});
+function forgotLock() {
+  askConfirm('نسيت الرمز؟', 'الطريقة الوحيدة هي <b>مسح بيانات التطبيق</b>: المفضلة والسجل والرمز السري المحفوظ وقفل التطبيق. هل تريد المتابعة؟', () => {
+    [STORAGE_KEY, SETTINGS_KEY, PIN_KEY, PIN_CIPHER_KEY, HIST_KEY, LOCK_KEY, DAY_KEY, LOCKTRY_KEY].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+    location.reload();
+  });
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) hiddenAt = Date.now();
+  else if (lockEnabled() && hiddenAt && Date.now() - hiddenAt > 60000) showLock();
+});
+
+/* setup / change / disable flow (from settings) */
+const lsInput = document.getElementById('ls-input');
+let lsMode = 'set', lsStep = 'new', lsNew = '';
+function syncLockUI() {
+  const on = lockEnabled();
+  document.getElementById('lock-sub').textContent = on ? 'مفعّل — يُطلب الرمز عند فتح التطبيق' : 'متوقف';
+  document.getElementById('lock-main-btn').textContent = on ? 'تغيير' : 'تفعيل';
+  document.getElementById('lock-off-btn').style.display = on ? 'inline-block' : 'none';
+}
+function lockMainAction() { lsMode = lockEnabled() ? 'change' : 'set'; startLockFlow(); }
+function lockDisable() { lsMode = 'off'; startLockFlow(); }
+function startLockFlow() {
+  lsStep = lsMode === 'set' ? 'new' : 'verify';
+  lsNew = '';
+  renderLsStep();
+  document.getElementById('lockset-modal').classList.add('show');
+  setTimeout(() => lsInput.focus(), 300);
+}
+function renderLsStep() {
+  document.getElementById('ls-title').textContent = { set: 'تفعيل قفل التطبيق', change: 'تغيير رمز القفل', off: 'إيقاف قفل التطبيق' }[lsMode];
+  document.getElementById('ls-label').textContent = { verify: 'أدخل رمز القفل الحالي', new: 'أدخل رمز القفل الجديد (4 أرقام)', confirm: 'أعد إدخال الرمز للتأكيد' }[lsStep];
+  lsInput.value = ''; lsInput.classList.remove('err');
+}
+function closeLockSet(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('lockset-modal').classList.remove('show');
+  lsInput.value = ''; lsNew = '';
+}
+function lsFail(msg) { lsInput.classList.add('err'); shake(lsInput); vibrate(30); toast(msg); lsInput.value = ''; }
+lsInput.addEventListener('input', async function () {
+  this.value = cleanPin(this.value);
+  this.classList.remove('err');
+  if (this.value.length !== 4) return;
+  const code = this.value;
+  if (lsStep === 'verify') {
+    if (!(await verifyLock(code))) return lsFail('الرمز الحالي غير صحيح');
+    if (lsMode === 'off') {
+      lockData = null;
+      try { localStorage.removeItem(LOCK_KEY); } catch (e) {}
+      closeLockSet(); syncLockUI(); toast('تم إيقاف قفل التطبيق');
+      return;
+    }
+    lsStep = 'new'; renderLsStep();
+  } else if (lsStep === 'new') {
+    lsNew = code; lsStep = 'confirm'; renderLsStep();
+  } else if (lsStep === 'confirm') {
+    if (code !== lsNew) { lsStep = 'new'; lsNew = ''; renderLsStep(); return lsFail('الرمزان غير متطابقين، أعد المحاولة'); }
+    const mode = canSubtle() ? 'p' : 'f', salt = randSalt();
+    lockData = { s: salt, m: mode, h: await hashLock(code, salt, mode) };
+    try { localStorage.setItem(LOCK_KEY, JSON.stringify(lockData)); } catch (e) {}
+    closeLockSet(); syncLockUI(); toast('تم تفعيل قفل التطبيق');
+  }
+});
+
+/* ============ Saved PIN (settings) ============ */
+function syncPinUI() {
+  let has = false;
+  try { has = !!(localStorage.getItem(PIN_CIPHER_KEY) || localStorage.getItem(PIN_KEY)); } catch (e) {}
+  document.getElementById('pin-sub').textContent = has ? 'محفوظ ••••' : 'غير محفوظ';
+  document.getElementById('pin-edit-btn').textContent = has ? 'تعديل' : 'إضافة';
+  document.getElementById('pin-del-btn').style.display = has ? 'inline-block' : 'none';
+}
+function openPinModal() {
+  const el = document.getElementById('pin-edit');
+  el.value = ''; el.classList.remove('err');
+  document.getElementById('pin-modal').classList.add('show');
+  setTimeout(() => el.focus(), 300);
+}
+function closePinModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('pin-modal').classList.remove('show');
+  document.getElementById('pin-edit').value = '';
+}
+document.getElementById('pin-edit').addEventListener('input', function () { this.value = cleanPin(this.value); this.classList.remove('err'); });
+async function savePinFromSettings() {
+  const el = document.getElementById('pin-edit');
+  const pin = cleanPin(el.value);
+  if (pin.length !== 4) { el.classList.add('err'); shake(el); vibrate(20); toast('الرمز يجب أن يكون 4 أرقام'); return; }
+  try {
+    await setSavedPin(pin);
+    closePinModal();
+    syncPinUI();
+    toast('تم حفظ الرمز بتخزين مشفّر');
+  } catch (e) {
+    toast('لا يمكن حفظ الرمز بأمان في هذا المتصفح؛ سيظل بإمكانك إدخاله عند كل عملية.');
+  }
+}
+function deleteSavedPin() {
+  askConfirm('حذف الرمز', 'هل تريد حذف رمز جوال باي المحفوظ؟ ستحتاج لإدخاله في كل مرة.', () => {
+    removeSavedPin(); syncPinUI(); toast('تم حذف الرمز');
+  });
+}
+
+function todayTotal() {
+  const d0 = new Date(); d0.setHours(0, 0, 0, 0);
+  const fromHist = historyList.reduce((t, h) => h.t >= d0.getTime() ? t + (Number(h.a) || 0) : t, 0);
+  return Math.max(fromHist, tallyToday());
+}
+function payWarning(meta) {
+  if (!meta) return '';
+  const amt = Number(meta.amount) || 0, m = [];
+  if (settings.bigLimit > 0 && amt > settings.bigLimit) m.push('⚠️ مبلغ كبير (' + amt + ' ₪): تأكد من الرقم والمبلغ قبل الاتصال.');
+  if (settings.dayLimit > 0) {
+    const tot = +(todayTotal() + amt).toFixed(2);
+    if (tot > settings.dayLimit) m.push('⚠️ مجموع اليوم سيصبح ' + tot + ' ₪ ويتجاوز حدّك اليومي (' + settings.dayLimit + ' ₪).');
+    else if (tot >= settings.dayLimit * 0.8) m.push('تنبيه: اقتربت من حدّك اليومي (' + tot + ' من ' + settings.dayLimit + ' ₪).');
+  }
+  return m.join('\n');
+}
+function showPaymentModal(title, code, label, icon, maskPin, meta) {
+  const warn = document.getElementById('pay-warn'), wm = payWarning(meta);
+  warn.textContent = wm; warn.style.display = wm ? 'block' : 'none';
+  document.getElementById('modal-title').textContent = title;
+  window._maskPin = maskPin || '';
+  document.getElementById('btn-pay-label').innerHTML = ico(icon) + ' ' + label;
+
+  const link = document.getElementById('btn-pay-link');
+  link.href = 'tel:' + code.replace(/#/g, '%23');
+  link.onclick = function () { lastCode = code; updateCodePreview(); addHistory(meta); };
+
+  lastCode = code;
+  updateCodePreview();
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('modal').classList.remove('show');
+}
+
+/* ============ Copy code ============ */
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;opacity:0;font-size:16px;top:0;left:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { ta.setSelectionRange(0, ta.value.length); } catch (e) {}
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) {}
+  if (ok) done(); else alert('الرمز: ' + text);
+  document.body.removeChild(ta);
+}
+
+function copyCode() {
+  if (!lastCode) { alert('لا يوجد رمز للنسخ'); return; }
+  const done = () => {
+    const original = topCopyBtn.innerHTML;
+    topCopyBtn.innerHTML = ico('check') + ' تم النسخ';
+    setTimeout(() => { topCopyBtn.innerHTML = original; }, 1500);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(lastCode).then(done).catch(() => fallbackCopy(lastCode, done));
+  } else {
+    fallbackCopy(lastCode, done);
+  }
+}
+
+/* ============ Clear ============ */
+function clearFields() {
+  document.getElementById('note').value = '';
+  phoneInput.value = '';
+  amountInput.value = '';
+  quickClear.classList.remove('show');
+  phoneWrapper.classList.remove('err', 'suc');
+  checkIcon.classList.remove('show');
+  errorMsg.classList.remove('show');
+  resetCode();
+  document.getElementById('modal').classList.remove('show');
+  updateStarState();
+  phoneInput.focus();
+}
+
+/* ============ Calculator ============ */
+function openCalculator() {
+  const val = amountInput.value.trim();
+  calcExpression = val && isFinite(Number(val)) ? String(Number(val)) : '';
+  updateCalcDisplay();
+  document.getElementById('calc-modal').classList.add('show');
+}
+function closeCalcModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('calc-modal').classList.remove('show');
+}
+function updateCalcDisplay() {
+  document.getElementById('calc-display').textContent = calcExpression
+    ? calcExpression.replace(/\*/g, '×').replace(/\//g, '÷')
+    : '0';
+}
+function calcInput(val) {
+  if (calcJustEvaluated && !['+', '-', '*', '/'].includes(val)) calcExpression = '';
+  calcJustEvaluated = false;
+  if (['+', '-', '*', '/'].includes(val)) {
+    if (!calcExpression && val !== '-') return;
+    if (['+', '-', '*', '/'].includes(calcExpression.slice(-1))) {
+      calcExpression = calcExpression.slice(0, -1) + val;
+    } else {
+      calcExpression += val;
+    }
+  } else if (val === '.') {
+    const parts = calcExpression.split(/[+\-*/]/);
+    const lastPart = parts[parts.length - 1];
+    if (lastPart.includes('.')) return;
+    calcExpression += (lastPart === '') ? '0.' : '.';
+  } else {
+    calcExpression += val;
+  }
+  updateCalcDisplay();
+}
+function calcClear() { calcJustEvaluated = false; calcExpression = ''; updateCalcDisplay(); }
+function calcBackspace() { calcExpression = calcExpression.slice(0, -1); updateCalcDisplay(); }
+
+function safeEval(expr) {
+  /* محلل حسابي بسيط بدون eval / Function */
+  const src = expr.replace(/\s+/g, '').replace(/[+\-*/.]+$/, '');
+  if (!src || !/^[0-9+\-*/.]+$/.test(src)) throw new Error('bad expression');
+  const toks = src.match(/\d+\.?\d*|\.\d+|[+\-*/]/g) || [];
+  if (toks.join('') !== src) throw new Error('bad expression');
+  let i = 0;
+  function factor() {
+    const t = toks[i++];
+    if (t === '-') return -factor();
+    if (t === undefined || /^[+*/]$/.test(t)) throw new Error('syntax');
+    return parseFloat(t);
+  }
+  function term() {
+    let v = factor();
+    while (toks[i] === '*' || toks[i] === '/') { const o = toks[i++]; const r = factor(); v = o === '*' ? v * r : v / r; }
+    return v;
+  }
+  function sum() {
+    let v = term();
+    while (toks[i] === '+' || toks[i] === '-') { const o = toks[i++]; const r = term(); v = o === '+' ? v + r : v - r; }
+    return v;
+  }
+  const result = sum();
+  if (i !== toks.length || typeof result !== 'number' || !isFinite(result)) throw new Error('invalid');
+  return result;
+}
+function calcPercent() {
+  if (!calcExpression) return;
+  try {
+    const r = safeEval(calcExpression) / 100;
+    calcExpression = String(Math.round(r * 1e10) / 1e10);
+    updateCalcDisplay();
+  } catch (e) {
+    document.getElementById('calc-display').textContent = 'خطأ';
+    calcExpression = '';
+  }
+}
+function calcResult() {
+  if (!calcExpression) return;
+  try {
+    const r = Math.round(safeEval(calcExpression) * 100) / 100;
+    calcExpression = String(r);
+    calcJustEvaluated = true;
+    updateCalcDisplay();
+    if (!(r > 0)) { toast('المبلغ يجب أن يكون أكبر من صفر'); return; }
+    if (r >= 1e7) { toast('المبلغ كبير جداً'); return; }
+    amountInput.value = String(r);
+    amountInput.dispatchEvent(new Event('input'));
+    setTimeout(() => document.getElementById('calc-modal').classList.remove('show'), 500);
+  } catch (e) {
+    document.getElementById('calc-display').textContent = 'خطأ';
+    calcExpression = '';
+  }
+}
+
+/* ============ UI enhancements ============ */
+const toastEl = document.createElement('div');
+toastEl.className = 'toast';
+toastEl.setAttribute('role', 'status');
+document.querySelector('.app').appendChild(toastEl);
+let toastTimer;
+function vibrate(ms) { if (settings.haptic && navigator.vibrate) navigator.vibrate(ms); }
+function shake(el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
+function toast(msg, ms) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), ms || 2600);
+}
+window.alert = function (msg) {
+  toast(msg); vibrate(20);
+  if (/مبلغ/.test(msg)) shake(amountInput);
+  else if (/جوال|رقم/.test(msg)) shake(phoneWrapper);
+};
+
+const summaryEl = document.getElementById('summary');
+let chipEls = document.querySelectorAll('.chip');
+function updateSummary() {
+  const p = phoneInput.value, a = Number(amountInput.value);
+  const ok = /^05\d{8}$/.test(p) && isFinite(a) && a > 0;
+  summaryEl.classList.toggle('show', ok);
+  if (ok) summaryEl.textContent = 'سيتم تحويل ' + a + ' ₪ إلى ' + p;
+  chipEls.forEach(c => c.classList.toggle('on', amountInput.value === c.dataset.v));
+}
+phoneInput.addEventListener('input', updateSummary);
+amountInput.addEventListener('input', updateSummary);
+const _clearFields = clearFields, _quickClear = quickClearPhone;
+clearFields = function () { _clearFields(); updateSummary(); };
+quickClearPhone = function () { _quickClear(); updateSummary(); };
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.mod.show').forEach(m => m.classList.remove('show'));
+    selectedFavPhone = null;
+  }
+});
+
+/* ============ Settings ============ */
+const SETTINGS_KEY = 'palpay_settings';
+let settings = { bigLimit: 0, dayLimit: 0, provider: 'palpay', theme: 'auto', haptic: true, hidePin: false, keepHistory: true, chips: [10, 20, 50, 100], svc: {} };
+try { settings = sanitizeSettings(JSON.parse(localStorage.getItem(SETTINGS_KEY)), settings); } catch (e) {}
+function saveSettings() { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {} }
+function applyTheme() {
+  const map = { auto: '(prefers-color-scheme:dark)', dark: 'all', light: 'not all' };
+  document.getElementById('dark-css').media = map[settings.theme] || map.auto;
+}
+function syncSettingsUI() {
+  document.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.theme === settings.theme));
+  const sw = document.getElementById('sw-haptic');
+  sw.classList.toggle('on', settings.haptic);
+  sw.setAttribute('aria-checked', String(settings.haptic));
+  const sp = document.getElementById('sw-hidepin');
+  sp.classList.toggle('on', settings.hidePin);
+  sp.setAttribute('aria-checked', String(settings.hidePin));
+  const sh = document.getElementById('sw-history');
+  sh.classList.toggle('on', settings.keepHistory);
+  sh.setAttribute('aria-checked', String(settings.keepHistory));
+}
+function toggleHistoryKeep() {
+  settings.keepHistory = !settings.keepHistory; saveSettings(); syncSettingsUI();
+  toast(settings.keepHistory ? 'تم تفعيل حفظ السجل' : 'تم إيقاف حفظ السجل');
+}
+function toggleHidePin() {
+  settings.hidePin = !settings.hidePin; saveSettings(); syncSettingsUI();
+  updateCodePreview();
+}
+function setTheme(t) { settings.theme = t; saveSettings(); applyTheme(); syncSettingsUI(); }
+function toggleHaptic() {
+  settings.haptic = !settings.haptic; saveSettings(); syncSettingsUI();
+  if (settings.haptic) vibrate(15);
+}
+function showMainSettings() {
+  document.getElementById('settings-main-view').hidden = false;
+  document.getElementById('settings-extra-view').hidden = true;
+  document.getElementById('settings-back').hidden = true;
+  document.getElementById('settings-title').textContent = 'الإعدادات';
+  const cnt = document.querySelector('#settings-modal .settings-cnt');
+  if (cnt) cnt.scrollTop = 0;
+}
+function showExtraSettings() {
+  document.getElementById('settings-main-view').hidden = true;
+  document.getElementById('settings-extra-view').hidden = false;
+  document.getElementById('settings-back').hidden = false;
+  document.getElementById('settings-title').textContent = 'خيارات إضافية';
+  const cnt = document.querySelector('#settings-modal .settings-cnt');
+  if (cnt) cnt.scrollTop = 0;
+}
+function openSettings() {
+  showMainSettings();
+  syncSettingsUI(); syncPinUI(); syncLockUI();
+  document.getElementById('settings-modal').classList.add('show');
+  document.getElementById('chips-in').value = settings.chips.join(', ');
+  document.getElementById('big-in').value = settings.bigLimit || 0;
+  document.getElementById('day-in').value = settings.dayLimit || 0;
+}
+function closeSettings(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('settings-modal').classList.remove('show');
+  showMainSettings();
+}
+
+/* ============ Share app ============ */
+const APP_SHARE_URL = 'https://anaspal.github.io/USSD/';
+function openShareModal() {
+  const btn = document.getElementById('share-copy-btn');
+  btn.innerHTML = ico('copy') + '<span>نسخ</span>';
+  document.getElementById('share-modal').classList.add('show');
+}
+function closeShareModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('share-modal').classList.remove('show');
+}
+function copyShareLink() {
+  const btn = document.getElementById('share-copy-btn');
+  const done = () => {
+    btn.innerHTML = ico('check') + '<span>تم النسخ</span>';
+    toast('تم نسخ رابط التطبيق');
+    setTimeout(() => {
+      if (btn.isConnected) btn.innerHTML = ico('copy') + '<span>نسخ</span>';
+    }, 1800);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(APP_SHARE_URL).then(done).catch(() => fallbackCopy(APP_SHARE_URL, done));
+  } else {
+    fallbackCopy(APP_SHARE_URL, done);
+  }
+}
+function clearAllFavorites() {
+  if (!favorites.length) { toast('لا توجد أرقام محفوظة'); return; }
+  askConfirm('مسح المفضلة', 'سيتم حذف <b>كل</b> الأرقام المحفوظة (' + favorites.length + '). هل تريد المتابعة؟', () => {
+    favorites = [];
+    persistFavorites(); renderQuickFavorites(); renderFavorites(); updateStarState();
+    toast('تم مسح المفضلة');
+  });
+}
+applyTheme();
+
+/* ============ PWA install ============ */
+let deferredInstall = null;
+const INSTALL_STATE_KEY = 'ussd_pwa_installed';
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+function hasInstalledApp() {
+  if (isStandalone()) return true;
+  try { return localStorage.getItem(INSTALL_STATE_KEY) === '1'; } catch (e) { return false; }
+}
+function updateInstallUI(forceInstalled) {
+  const installed = !!forceInstalled || hasInstalledApp();
+  const row = document.getElementById('install-row');
+  const mainSlot = document.getElementById('install-slot-main');
+  const extraSlot = document.getElementById('install-slot-extra');
+  if (row && mainSlot && extraSlot) {
+    const target = installed ? extraSlot : mainSlot;
+    if (row.parentElement !== target) target.appendChild(row);
+    mainSlot.hidden = installed;
+    extraSlot.hidden = !installed;
+  }
+  const sub = document.getElementById('install-sub');
+  const button = document.getElementById('install-btn');
+  if (installed) {
+    try { localStorage.setItem(INSTALL_STATE_KEY, '1'); } catch (e) {}
+    if (sub) sub.textContent = 'التطبيق مثبّت ويعمل كتطبيق مستقل';
+    if (button) { button.disabled = true; button.textContent = 'مثبّت'; }
+  } else {
+    if (sub) sub.textContent = 'أضفه إلى شاشتك الرئيسية كتطبيق';
+    if (button) { button.disabled = false; button.textContent = 'تثبيت'; }
+  }
+  return installed;
+}
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
+window.addEventListener('appinstalled', () => {
+  deferredInstall = null;
+  updateInstallUI(true);
+  toast('تم تثبيت التطبيق');
+});
+async function installApp() {
+  if (hasInstalledApp()) { updateInstallUI(true); toast('التطبيق مثبّت مسبقاً'); return; }
+  if (deferredInstall) {
+    const installPrompt = deferredInstall;
+    deferredInstall = null;
+    try {
+      installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice && choice.outcome === 'accepted') updateInstallUI(true);
+    } catch (e) { /* Keep the install action available if the browser rejects the prompt. */ }
+    return;
+  }
+  if (isIOS) { toast('في سفاري: اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية»', 4500); return; }
+  toast('من قائمة المتصفح (⋮) اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»', 4500);
+}
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+updateInstallUI();
+// APK download: hide inside the Android app itself and on iPhone (APK can't run there)
+if (window.Capacitor || isIOS) document.getElementById('apk-row').style.display = 'none';
+
+
+
+/* ============ Backup / Restore ============ */
+function backupJSON() {
+  return JSON.stringify({ app: 'ussd-backup', v: 1, date: new Date().toISOString(), favorites, history: historyList, settings });
+}
+function exportBackup() {
+  // داخل تطبيق الأندرويد (WebView) لا يعمل تنزيل ملفات blob، فنستخدم النسخ كنص بدلاً منه
+  if (window.Capacitor) { copyBackup(); return; }
+  try {
+    const d = new Date(), z = n => String(n).padStart(2, '0');
+    const name = 'ussd-backup-' + d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + '.json';
+    const url = URL.createObjectURL(new Blob([backupJSON()], { type: 'application/json' }));
+    const a = document.createElement('a'); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    toast('تم تصدير النسخة الاحتياطية');
+  } catch (e) { toast('تعذّر التصدير، جرّب "نسخ النص"'); }
+}
+function copyBackup() {
+  const t = backupJSON();
+  const ok = () => toast('تم نسخ النص، الصقه في ملاحظة أو رسالة لنفسك');
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok).catch(() => toast('تعذّر النسخ'));
+  else toast('تعذّر النسخ');
+}
+function importBackup(inp) {
+  const f = inp.files && inp.files[0]; inp.value = '';
+  if (!f) return;
+  if (f.size > 2 * 1024 * 1024) { toast('الملف كبير جداً'); return; }
+  const r = new FileReader();
+  r.onload = () => {
+    let o; try { o = JSON.parse(r.result); } catch (e) { o = null; }
+    if (!o || typeof o !== 'object' || o.app !== 'ussd-backup') { toast('الملف ليس نسخة احتياطية صالحة'); return; }
+    const favs = sanitizeFavs(o.favorites), hist = sanitizeHist(o.history);
+    askConfirm('استيراد نسخة احتياطية', 'سيتم دمج ' + favs.length + ' مفضلة و ' + hist.length + ' عملية مع بياناتك الحالية، واستبدال الإعدادات. لن يتأثر الرمز السري ولا قفل التطبيق.', () => {
+      favs.forEach(x => { if (!favorites.some(f => f.phone === x.phone)) favorites.push(x); });
+      const seen = new Set(historyList.map(h => h.t + '|' + h.p + '|' + h.a));
+      hist.forEach(h => { const k = h.t + '|' + h.p + '|' + h.a; if (!seen.has(k)) { seen.add(k); historyList.push(h); } });
+      historyList.sort((a, b) => b.t - a.t); historyList = historyList.slice(0, HIST_MAX);
+      settings = sanitizeSettings(o.settings, settings);
+      persistFavorites(); persistHistory(); saveSettings();
+      toast('تم الاستيراد');
+      setTimeout(() => location.reload(), 900);
+    });
+  };
+  r.onerror = () => toast('تعذّرت قراءة الملف');
+  r.readAsText(f);
+}
+
+/* ============ Provider switch ============ */
+function syncProvider() {
+  document.querySelectorAll('.prov-seg button').forEach(b => b.classList.toggle('on', b.dataset.prov === settings.provider));
+}
+function setProvider(p) {
+  settings.provider = p === 'jawwal' ? 'jawwal' : 'palpay';
+  saveSettings(); syncProvider(); vibrate(10);
+}
+syncProvider();
+
+/* ============ Quick services ============ */
+const SVC = [
+  { k: 'balpp', t: 'استعلام رصيد PalPay محفظتي', d: '*370*3#' }, { k: 'baljp', t: 'استعلام رصيد جوال باي', d: '*110*3#' },
+  { k: 'pp', t: 'قائمة PalPay', d: '*370#' }, { k: 'jp', t: 'قائمة جوال باي', d: '*110#' }
+];
+const SVC_RE = /^\*[\d*]*#$/;
+function svcCode(x) { return settings.svc[x.k] !== undefined ? settings.svc[x.k] : (x.d || ''); }
+function openSvc() {
+  const ul = document.getElementById('svc-list'); ul.innerHTML = '';
+  SVC.forEach(x => {
+    const li = document.createElement('li'); li.className = 'f-item';
+    li.style.cssText = 'flex-direction:column;align-items:stretch;gap:8px;cursor:default';
+    const t = document.createElement('span'); t.className = 'f-name'; t.textContent = x.t;
+    const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;align-items:center';
+    const inp = document.createElement('input'); inp.className = 'nm-in'; inp.dir = 'ltr'; inp.style.cssText = 'margin:0;text-align:left';
+    inp.placeholder = 'مثال: *123#'; inp.value = svcCode(x); inp.setAttribute('inputmode', 'tel');
+    inp.addEventListener('change', () => {
+      const v = inp.value.trim();
+      if (v && !SVC_RE.test(v)) { toast('الرمز يجب أن يبدأ بـ * وينتهي بـ #'); shake(inp); inp.value = svcCode(x); return; }
+      settings.svc[x.k] = v; saveSettings(); toast('تم حفظ الرمز');
+    });
+    const go = document.createElement('button'); go.type = 'button'; go.className = 'btn-inst'; go.textContent = 'اتصال';
+    go.addEventListener('click', () => {
+      const v = inp.value.trim();
+      if (!SVC_RE.test(v)) { toast('أدخل الرمز أولاً بصيغة *123#'); shake(inp); return; }
+      settings.svc[x.k] = v; saveSettings(); closeSvc();
+      showPaymentModal(x.t, v, 'اتصال', 'phone');
+    });
+    row.append(inp, go); li.append(t, row); ul.appendChild(li);
+  });
+  document.getElementById('svc-modal').classList.add('show');
+}
+function closeSvc(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('svc-modal').classList.remove('show');
+}
+
+/* ============ Custom quick amounts ============ */
+function renderChips() {
+  const box = document.getElementById('chips'); box.innerHTML = '';
+  settings.chips.forEach(v => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.dataset.v = v; b.textContent = v;
+    b.addEventListener('click', () => { amountInput.value = v; amountInput.dispatchEvent(new Event('input')); vibrate(10); });
+    box.appendChild(b);
+  });
+  chipEls = box.querySelectorAll('.chip'); updateSummary();
+}
+function saveChips() {
+  const el = document.getElementById('chips-in');
+  const arr = normalizeDigits(el.value).split(/[,،\s]+/).map(Number).filter(n => isFinite(n) && n > 0);
+  const uniq = arr.filter((n, i) => arr.indexOf(n) === i).slice(0, 6);
+  if (!uniq.length) { toast('أدخل مبلغاً واحداً على الأقل'); el.value = settings.chips.join(', '); return; }
+  settings.chips = uniq; saveSettings(); renderChips(); el.value = uniq.join(', '); toast('تم حفظ المبالغ');
+}
+const _openSettings = openSettings;
+openSettings = function () {
+  _openSettings();
+  document.getElementById('chips-in').value = settings.chips.join(', ');
+  document.getElementById('big-in').value = settings.bigLimit || 0;
+  document.getElementById('day-in').value = settings.dayLimit || 0;
+};
+function saveLimits() {
+  const f = id => { const n = Number(normalizeDigits(document.getElementById(id).value)); return isFinite(n) && n > 0 ? n : 0; };
+  settings.bigLimit = f('big-in'); settings.dayLimit = f('day-in');
+  document.getElementById('big-in').value = settings.bigLimit; document.getElementById('day-in').value = settings.dayLimit;
+  saveSettings(); toast('تم الحفظ');
+}
+renderChips();
+renderRecent();
+document.querySelectorAll('.m-cnt').forEach(el => { el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); });
+
+/* ============ Init ============ */
+renderQuickFavorites();
+updateStarState();
+syncPinUI();
+migrateLegacySavedPin().then(syncPinUI);
+syncLockUI();
+if (lockEnabled()) showLock(); else { document.documentElement.classList.remove('locked'); setInert(false); }
+(function () {
+  try {
+    const q = new URLSearchParams(location.search), a = q.get('a'), w = q.get('w');
+    if (w === 'palpay' || w === 'jawwal') setProvider(w);
+    if (a === 'friend' || a === 'merchant') {
+      const el = document.querySelector('.btn-pay-opt.' + a);
+      if (el) { el.classList.add('hl'); setTimeout(() => el.classList.remove('hl'), 3200); }
+      toast('اكتب الرقم والمبلغ ثم اضغط ' + (a === 'friend' ? 'دفع لصديق' : 'دفع لتاجر'), 3500);
+      if (!lockEnabled()) phoneInput.focus();
+      history.replaceState(null, '', location.pathname);
+    }
+  } catch (e) {}
+})();
+/* ===== قوائم منسدلة مخصصة (تستبدل قائمة المتصفح الافتراضية) ===== */
+(function(){
+  const CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  let openPop=null, openBtn=null;
+  function closePop(refocus){ const b=openBtn; if(openPop)openPop.remove(); if(b){b.classList.remove('open');b.setAttribute('aria-expanded','false');} openPop=openBtn=null; if(refocus&&b)b.focus(); }
+  function enhance(sel){
+    if(sel.dataset.cs) return; sel.dataset.cs='1';
+    const wrap=document.createElement('div'); wrap.className='cs-wrap';
+    sel.parentNode.insertBefore(wrap,sel); wrap.appendChild(sel); sel.classList.add('cs-native'); sel.tabIndex=-1; sel.setAttribute('aria-hidden','true');
+    const btn=document.createElement('button'); btn.type='button'; btn.className='cs-btn';
+    btn.setAttribute('aria-haspopup','listbox'); btn.setAttribute('aria-expanded','false');
+    btn.innerHTML='<span class="cs-txt"></span>'+CHEV; wrap.appendChild(btn);
+    const txt=btn.querySelector('.cs-txt');
+    const sync=()=>{ txt.textContent=(sel.options[sel.selectedIndex]||{}).text||''; };
+    sync(); sel.addEventListener('change',sync);
+    function choose(o){ sel.value=o.value; sel.dispatchEvent(new Event('change',{bubbles:true})); sync(); closePop(true); }
+    function open(){
+      closePop();
+      const host=btn.closest('.mod')||document.body;
+      const pop=document.createElement('div'); pop.className='cs-pop'; pop.setAttribute('role','listbox');
+      const items=[];
+      Array.from(sel.options).forEach(o=>{
+        const it=document.createElement('div'); it.className='cs-opt'+(o.value===sel.value?' sel':''); it.setAttribute('role','option'); it.tabIndex=-1;
+        it.setAttribute('aria-selected',String(o.value===sel.value));
+        it.innerHTML='<span></span>'+CHECK; it.firstChild.textContent=o.text;
+        it.addEventListener('click',function(ev){ ev.stopPropagation(); choose(o); });
+        pop.appendChild(it); items.push({it,o});
+      });
+      pop.addEventListener('keydown',function(e){
+        const idx=items.findIndex(x=>x.it===document.activeElement);
+        if(e.key==='ArrowDown'){ e.preventDefault(); items[Math.min(items.length-1,idx+1)].it.focus(); }
+        else if(e.key==='ArrowUp'){ e.preventDefault(); items[Math.max(0,idx-1)].it.focus(); }
+        else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(idx>=0) choose(items[idx].o); }
+        else if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); closePop(true); }
+        else if(e.key==='Tab'){ closePop(); }
+      });
+      host.appendChild(pop);
+      const hr=host.getBoundingClientRect(), br=btn.getBoundingClientRect();
+      const w=Math.max(br.width,150);
+      let left=br.left-hr.left; if(left+w>hr.width-8) left=hr.width-8-w; if(left<8) left=8;
+      pop.style.width=w+'px'; pop.style.left=left+'px';
+      const h=pop.offsetHeight, spaceBelow=hr.bottom-br.bottom, spaceAbove=br.top-hr.top;
+      if(spaceBelow<h+10 && spaceAbove>spaceBelow){ pop.style.bottom=(hr.bottom-br.top+6)+'px'; pop.style.transformOrigin='bottom center'; }
+      else { pop.style.top=(br.bottom-hr.top+6)+'px'; pop.style.transformOrigin='top center'; }
+      btn.classList.add('open'); btn.setAttribute('aria-expanded','true'); openPop=pop; openBtn=btn;
+      const cur=items.find(x=>x.o.value===sel.value)||items[0]; if(cur) cur.it.focus();
+    }
+    btn.addEventListener('click',function(e){ e.stopPropagation(); if(openBtn===btn) closePop(); else open(); });
+    btn.addEventListener('keydown',function(e){ if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); open(); } });
+  }
+  document.addEventListener('click',function(e){ if(e.target.closest&&(e.target.closest('.cs-btn')||e.target.closest('.cs-pop'))) return; closePop(); },true);
+  document.querySelectorAll('#hist-kind,#hist-when').forEach(enhance);
+})();
+</script>
+<script>
+/* Dock: keyboard access + sliding indicator follows the open sheet */
+(function(){
+  var nav=document.querySelector('.nav'); if(!nav) return;
+  var items=Array.prototype.slice.call(nav.querySelectorAll('.n-item'));
+  var map=[null,'hist-modal','fav-modal','settings-modal'];
+  items.forEach(function(el){
+    el.setAttribute('role','button'); el.tabIndex=0;
+    el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.click(); } });
+  });
+  function sync(){
+    var idx=0;
+    for(var i=1;i<map.length;i++){ var m=document.getElementById(map[i]); if(m&&m.classList.contains('show')) idx=i; }
+    items.forEach(function(el,i){ el.classList.toggle('act',i===idx); if(i===idx) el.setAttribute('aria-current','true'); else el.removeAttribute('aria-current'); });
+    nav.style.setProperty('--i',idx);
+  }
+  if('MutationObserver' in window){
+    var mo=new MutationObserver(sync);
+    for(var i=1;i<map.length;i++){ var m=document.getElementById(map[i]); if(m) mo.observe(m,{attributes:true,attributeFilter:['class']}); }
+  }
+  sync();
+})();
+</script>
+<script>
+/* Low battery (<20%, not charging): show notice + switch on calm-motion mode */
+(function(){
+  if(!navigator.getBattery) return;
+  var app=document.querySelector('.app'); if(!app) return;
+  var note=document.createElement('div');
+  note.className='batt-note'; note.setAttribute('role','status'); note.setAttribute('aria-live','polite');
+  note.innerHTML='<span class="batt-ic" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" rx="2.5"/><path d="M22 11v2"/><path d="M6 10.5v3"/></svg></span><span class="batt-txt"></span><button type="button" class="batt-x" aria-label="إغلاق"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>';
+  app.appendChild(note);
+  var txt=note.querySelector('.batt-txt'), timer, shown=false;
+  function hide(){ note.classList.remove('show'); clearTimeout(timer); }
+  note.querySelector('.batt-x').addEventListener('click',hide);
+  function check(b){
+    var low=b.level<0.2 && !b.charging;
+    document.documentElement.classList.toggle('lowpower',low);
+    if(low && !shown){
+      shown=true;
+      txt.textContent='البطارية '+Math.round(b.level*100)+'%، تم تشغيل توفير الحركة وتهدئة المؤثرات.';
+      note.classList.add('show'); clearTimeout(timer); timer=setTimeout(hide,8000);
+    } else if(!low){ shown=false; hide(); }
+  }
+  navigator.getBattery().then(function(b){
+    check(b);
+    b.addEventListener('levelchange',function(){check(b)});
+    b.addEventListener('chargingchange',function(){check(b)});
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>
